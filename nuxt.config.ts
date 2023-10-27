@@ -4,6 +4,13 @@ export default defineNuxtConfig({
   ssr: false,
 
   modules: [
-    '@nuxtjs/tailwindcss'
-  ]
+    '@nuxtjs/tailwindcss',
+    '@vueuse/nuxt'
+  ],
+
+  runtimeConfig: {
+    public: {
+      apiBaseUrl: process.env.API_ROOT
+    }
+  }
 })
