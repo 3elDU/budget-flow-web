@@ -1,6 +1,7 @@
 <template>
+    <title>Dashboard</title>
     <p class="font-semibold">Dashboard</p>
-    <button class="px-3 py-2 text-white font-semibold bg-sky-500 my-3 hover:bg-sky-700 rounded-md" @click="logout">
+    <button class="btn-default" @click="logout">
         Log out
     </button>
     <p class="font-mono whitespace-pre">{{ me }}</p>
