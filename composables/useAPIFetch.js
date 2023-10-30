@@ -1,7 +1,11 @@
-import type { UseFetchOptions } from "nuxt/app";
 import { defu } from 'defu';
 
-export default async function useAPIFetch<T>(url: string, options: UseFetchOptions<T> = {}) {
+/**
+ * @template T
+ * @param {string} url 
+ * @param {import('nuxt/app').UseFetchOptions<T>} options 
+ */
+export default async function useAPIFetch(url, options = {}) {
     const { isAuthenticated, setIsAuthenticated } = useIsAuthenticated();
     const { authToken } = useAuthToken();
 
@@ -12,7 +16,7 @@ export default async function useAPIFetch<T>(url: string, options: UseFetchOptio
         return useFetch('/');
     }
 
-    const defaults: UseFetchOptions<T> = {
+    const defaults = {
         baseURL: useRuntimeConfig().public.apiBaseUrl,
 
         headers: {

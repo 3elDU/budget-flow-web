@@ -1,7 +1,7 @@
 <template>
     <title>Login</title>
-    <div id="wrapper">
-        <div id="container" class="mx-4 w-full max-w-[300px]">
+    <div class="w-screen h-screen flex justify-center items-center">
+        <div class="flex flex-col items-left mx-4 w-full max-w-[300px]">
             <h1 class="text-lg font-semibold">Login</h1>
             <form ref="form">
                 <div class="mt-2">
@@ -82,20 +82,3 @@ async function login() {
     }
 }
 </script>
-
-<style>
-#wrapper {
-    width: 100dvw;
-    height: 100dvh;
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#container {
-    display: flex;
-    flex-direction: column;
-    align-items: left;
-}
-</style>
