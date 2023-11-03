@@ -23,6 +23,10 @@ export default async function useAPIFetch(url, options = {}) {
             Authorization: `Bearer ${authToken.value}`
         },
 
+        onRequestError() {
+            navigateTo('/api_down');
+        },
+
         onResponseError({ response }) {
             // If the user is unauthorized, redirect to the login page
             if (response.status == 401) {

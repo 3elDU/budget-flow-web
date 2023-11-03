@@ -33,6 +33,7 @@
 import useAPIFetch from '~/composables/useAPIFetch';
 
 const user = await useAuthUser();
+console.log(user);
 
 const { data: budgets } = await useAPIFetch('/api/budgets');
 
