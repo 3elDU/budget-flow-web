@@ -20,7 +20,8 @@ export default async function useAPIFetch(url, options = {}) {
         baseURL: useRuntimeConfig().public.apiBaseUrl,
 
         headers: {
-            Authorization: `Bearer ${authToken.value}`
+            Authorization: `Bearer ${authToken.value}`,
+            Accept: "application/json"
         },
 
         onRequestError() {

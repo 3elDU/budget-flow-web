@@ -1,6 +1,6 @@
 <template>
     <title>Login</title>
-    <div class="w-screen h-screen flex justify-center items-center">
+    <div class="w-screen h-screen flex justify-center items-center" @keypress.enter="login">
         <div class="flex flex-col items-left mx-4 w-full max-w-[300px]">
             <h1 class="text-lg font-semibold">Login</h1>
             <form ref="form">
