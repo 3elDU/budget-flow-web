@@ -6,12 +6,16 @@ html {
     @apply font-sans text-primaryfg bg-primarybg;
 }
 
+button {
+    @apply block w-fit h-fit;
+}
+
 .btn-default {
-    @apply block px-3 py-2 font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
+    @apply px-3 py-2 font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
 }
 
 .btn-small {
-    @apply block px-3 py-1.5 font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
+    @apply px-3 py-1.5 font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
 }
 
 .input-default {
