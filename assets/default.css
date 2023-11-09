@@ -1,7 +1,3 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 html {
     @apply font-sans text-primaryfg bg-primarybg;
 }
@@ -11,13 +7,21 @@ button {
 }
 
 .btn-default {
-    @apply px-3 py-2 font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
+    @apply px-3 py-2 flex gap-2 justify-center items-center font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
 }
 
 .btn-small {
-    @apply px-3 py-1.5 font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
+    @apply px-3 py-1.5 flex gap-2 justify-center items-center font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
 }
 
 .input-default {
-    @apply block px-3 py-2 text-sm rounded-md bg-secondary focus:outline-none border-2 border-primary focus:border-primary invalid:border-error invalid:text-error invalid:font-semibold;
+    @apply block appearance-none px-3 py-2 text-sm rounded-md bg-secondary focus:outline-none border-2 border-primary focus:border-primary invalid:border-error invalid:text-error invalid:font-semibold;
+}
+
+.select-default {
+    @apply block bg-secondary border-2 border-primary disabled:border-secondary-d rounded-md focus:ring-0;
+}
+
+.checkbox-default {
+    @apply rounded-sm text-primary bg-secondary disabled:text-secondary border-2 border-primary disabled:border-secondary focus:outline-0;
 }

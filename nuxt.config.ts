@@ -1,7 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
-  devtools: { enabled: true },
+  devtools: { enabled: false },
   ssr: false,
+  app: {
+    pageTransition: {
+      name: 'page',
+      mode: 'out-in'
+    }
+  },
 
   modules: [
     '@nuxtjs/tailwindcss',
@@ -29,6 +35,9 @@ export default defineNuxtConfig({
 
   tailwindcss: {
     config: {
+      plugins: [
+        require('@tailwindcss/forms')
+      ],
       theme: {
         fontFamily: {
           'sans': ['Inter'],
@@ -41,7 +50,7 @@ export default defineNuxtConfig({
             secondaryfg: '#B0B5B6',
             primary: '#534DC6',
             secondary: '#19182B',
-            secondary_d: '#131320',
+            'secondary-d': '#131320',
             accent: '#C07BBC',
             success: '#639A55',
             error: '#C95B5B'
