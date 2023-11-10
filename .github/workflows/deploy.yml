@@ -1,0 +1,41 @@
+name: Build and deploy
+
+on:
+    push:
+        branches: ["main"]
+
+jobs:
+    deploy:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout
+          uses: actions/checkout@v4
+
+        - name: Setup Node
+          uses: actions/setup-node@v4
+          with:
+            cache: npm
+            node-version: current
+
+        - name: Install dependencies
+          run: npm install
+
+        - name: Write .env file
+          env:
+            API_ROOT: ${{ vars.API_ROOT }}
+          run:
+            echo "API_ROOT=\"$API_ROOT\"" > .env
+
+        - name: Build
+          run: npm run generate
+    
+        - name: Deploy
+          uses: cross-the-world/ssh-scp-ssh-pipelines@latest
+          env:
+            APP_DIR: ${{ vars.APP_DIR }}
+          with:
+            host: ${{ secrets.SSH_HOST }}
+            user: ${{ secrets.SSH_USER }}
+            key: ${{ secrets.SSH_PRIVATE_KEY }}
+            scp: |
+              '.output/public/*' => $APP_DIR/
