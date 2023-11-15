@@ -19,7 +19,7 @@ button {
 }
 
 .select-default {
-    @apply block bg-secondary border-2 border-primary disabled:border-secondary-d rounded-md focus:ring-0;
+    @apply block bg-secondary text-sm border-2 border-primary disabled:border-secondary-d rounded-md focus:ring-0;
 }
 
 .checkbox-default {
