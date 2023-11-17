@@ -22,7 +22,11 @@
             </label>
         </div>
 
-        <div class="flex flex-row flex-wrap gap-4 justify-center">
+        <div v-if="error">
+            <p class="text-xl font-bold">No analytics available</p>
+        </div>
+
+        <div v-if="data" class="flex flex-row flex-wrap gap-4 justify-center">
             <LineChart :currency="user.settings.preferred_currency_iso" :data="chartData.income" label="Income"
                 class="w-full max-w-2xl" />
             <LineChart :currency="user.settings.preferred_currency_iso" :data="chartData.expense" label="Expense"
@@ -49,7 +53,7 @@ const period = ref("day");
 const startTime = ref(null);
 const endTime = ref(null);
 
-const { data, refresh } = await useAPIFetch('/api/analytics', {
+const { data, error, refresh } = await useAPIFetch('/api/analytics', {
     params: {
         period: period,
         start_time: startTime,

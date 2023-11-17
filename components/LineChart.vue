@@ -42,14 +42,7 @@ const currencyFormatter = new Intl.NumberFormat(navigator.language, {
     minimumFractionDigits: 0,
 });
 
-const singleDataPoint = ref(false);
-watch(props, (props) => {
-    if (props?.data?.datasets[0]?.data?.length === 1) {
-        singleDataPoint.value = true;
-    } else {
-        singleDataPoint.value = false;
-    }
-});
+const singleDataPoint = computed(() => props?.data?.datasets[0]?.data?.length === 1);
 
 // Registering required library functionality
 ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale, Colors);
