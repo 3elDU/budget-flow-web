@@ -1,6 +1,6 @@
 <template>
     <div class="mx-4 flex flex-col gap-6">
-        <title>Analytics</title>
+        <Title>Analytics</Title>
         <div class="flex flex-col sm:flex-row flex-wrap gap-4">
             <div class="flex gap-4">
                 <label class="block w-full sm:w-fit">

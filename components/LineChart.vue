@@ -38,7 +38,7 @@ const props = defineProps({
 });
 const currencyFormatter = new Intl.NumberFormat(navigator.language, {
     style: 'currency',
-    currency: props.currency,
+    currency: props.currency ?? 'USD',
     minimumFractionDigits: 0,
 });
 

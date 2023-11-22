@@ -7,9 +7,7 @@
  * @returns {string} ref.value.email
  */
 export default async function useAuthUser() {
-    const { data: user } = await useAPIFetch('/api/users/me', {
-        cache: "force-cache",
-    });
+    const { data: user } = await useAPIFetch('/api/users/me');
 
     return user;
 }
