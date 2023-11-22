@@ -1,5 +1,5 @@
 <template>
-    <Teleport to="#modals" v-if="modelValue" :disabled="noTeleport">
+    <Teleport to="#modals" v-if="modelValue">
         <div class="fixed inset-x-0 bottom-0 overflow-y-auto bg-black bg-opacity-50">
             <div ref="flexElement" @click="click($event)"
                 class="flex justify-center sm:items-center items-end min-h-screen">
