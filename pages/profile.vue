@@ -4,11 +4,15 @@
 
         <h1 class="font-bold text-3xl mb-4">{{ user.name }}</h1>
 
-        <form class="w-full max-w-[350px] grid grid-cols-1 gap-4">
+        <div v-if="pending" class="flex gap-2">
+            Loading user settings
+            <Icon size="24" name="line-md:loading-twotone-loop" />
+        </div>
+        <form v-else class="w-full max-w-[350px] grid grid-cols-1 gap-4">
             <label class="block">
                 <span for="preferred_currency" class="text-sm">Preferred currency</span>
                 <select :disabled="!editing" class="select-default mt-1 w-full" name="preferred_currency"
-                    v-model="preferredCurrency">
+                    v-model="settings.preferred_currency_iso">
                     <option v-for="currency in currenciesList" :value="currency">
                         {{ currency }}
                     </option>
@@ -17,7 +21,7 @@
 
             <label class="inline-flex items-center">
                 <input :disabled="!editing" class="checkbox-default mr-1" type="checkbox" name="show_fractional"
-                    v-model="showFractionalNumbers">
+                    v-model="settings.show_fractional">
                 <span class="ml-1 text-sm" for="show_fractional">Show fractional numbers</span>
             </label>
 
@@ -25,10 +29,11 @@
                 <Transition name="fade">
                     <div v-if="editing" class="flex gap-2">
                         <button class="btn-default" @click.prevent="saveChanges">
-                            <Icon name="mdi:content-save" />
+                            <Icon v-if="saving" name="line-md:loading-twotone-loop" />
+                            <Icon v-else name="mdi:content-save" />
                             Save
                         </button>
-                        <button class="btn-default !bg-error" @click.prevent="editing = false">
+                        <button class="btn-default !bg-error" @click.prevent="editing = false" :disabled="saving">
                             <Icon name="mdi:delete" />
                             Cancel
                         </button>
@@ -45,11 +50,9 @@
 
 <script setup>
 const user = await useAuthUser();
-const { data: settings } = await useAPIFetch('/api/users/me/settings');
-
+const { data: settings, pending } = await useAPIFetch('/api/users/me/settings', { lazy: true });
+const saving = ref(false);
 const editing = ref(false);
-const preferredCurrency = ref(settings.value.preferred_currency_iso);
-const showFractionalNumbers = ref(settings.value.show_fractional);
 
 const currenciesList = [
     'USD',
@@ -58,12 +61,15 @@ const currenciesList = [
 ];
 
 async function saveChanges() {
+    if (saving.value) {
+        return;
+    }
+
+    saving.value = true;
     await useAPIFetch('/api/users/me/settings', {
-        method: 'PUT', body: {
-            preferred_currency_iso: preferredCurrency.value,
-            show_fractional: showFractionalNumbers.value
-        }
+        method: 'PUT', body: settings.value,
     });
+    saving.value = false;
     editing.value = false;
 }
 </script>

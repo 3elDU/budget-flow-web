@@ -1,5 +1,6 @@
 <template>
-    <nav v-if="largeScreen" class="w-full mb-4 bg-secondary flex flex-row px-6 py-2.5 gap-6 font-bold text-xl items-center">
+    <nav v-if="largeScreen"
+        class="sticky top-0 z-50 mb-4 drop-shadow-lg bg-secondary flex flex-row px-6 py-2.5 gap-6 font-bold text-xl items-center">
         <div class="flex flex-row">
             <div class="text-2xl">
                 Budget-Flow
@@ -17,13 +18,14 @@
             <button @click="logout">Log out</button>
         </div>
     </nav>
-    <div v-else class="mb-16">
-        <button @click="toggleSidebar" class="absolute z-50 top-4 left-4">
+    <div v-else class="mb-16 relative">
+        <div class="fixed top-0 z-30 w-full h-16 bg-primarybg"></div>
+        <button @click="toggleSidebar" class="fixed z-50 top-4 left-4">
             <Icon :name="sidebarOpen ? 'mdi:close' : 'mdi:menu'" size="32" />
         </button>
         <Transition name="sidebar">
             <nav v-if="sidebarOpen"
-                class="fixed z-40 w-screen max-w-sm h-screen bg-secondary shadow-2xl flex flex-col px-6 pt-4 gap-6 font-bold text-2xl">
+                class="fixed inset-0 z-40 w-full sm:max-w-sm h-full bg-secondary shadow-2xl flex flex-col px-6 pt-4 gap-6 font-bold text-2xl">
 
                 <div class="ml-auto">
                     <NuxtLink to="/profile" :title="user.email" @click="toggleSidebar">

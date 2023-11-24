@@ -27,12 +27,12 @@
         </div>
 
         <div v-if="data" class="flex flex-row flex-wrap gap-4 justify-center">
-            <LineChart :currency="user.settings.preferred_currency_iso" :data="chartData.income" label="Income"
-                class="w-full max-w-2xl" />
-            <LineChart :currency="user.settings.preferred_currency_iso" :data="chartData.expense" label="Expense"
-                class="w-full max-w-2xl" />
-            <LineChart :currency="user.settings.preferred_currency_iso" :data="chartData.balance" label="Balance"
-                class="w-full max-w-2xl" />
+            <LineChart :loading="pending" :currency="user.settings.preferred_currency_iso" :data="chartData.income"
+                label="Income" class="w-full max-w-2xl" />
+            <LineChart :loading="pending" :currency="user.settings.preferred_currency_iso" :data="chartData.expense"
+                label="Expense" class="w-full max-w-2xl" />
+            <LineChart :loading="pending" :currency="user.settings.preferred_currency_iso" :data="chartData.balance"
+                label="Balance" class="w-full max-w-2xl" />
         </div>
     </div>
 </template>
@@ -53,7 +53,8 @@ const period = ref("day");
 const startTime = ref(null);
 const endTime = ref(null);
 
-const { data, error, refresh } = await useAPIFetch('/api/analytics', {
+const { pending, data, error, refresh } = await useAPIFetch('/api/analytics', {
+    lazy: true,
     params: {
         period: period,
         start_time: startTime,

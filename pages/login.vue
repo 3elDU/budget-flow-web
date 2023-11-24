@@ -1,5 +1,5 @@
 <template>
-    <div class="w-screen h-screen flex justify-center items-center" @keypress.enter="login">
+    <div class="h-screen flex justify-center items-center" @keypress.enter="login">
         <Title>Login</Title>
         <div class="flex flex-col items-left mx-4 w-full max-w-[300px]">
             <h1 class="text-lg font-semibold">Login</h1>
@@ -21,7 +21,11 @@
                 </ul>
 
                 <div class="mt-6 text-right">
-                    <button type="button" @click="login" class="btn-small px-5 py-1.5">Login</button>
+                    <button type="button" @click="login"
+                        class="btn-small px-5 py-1.5 flex gap-2 justify-center items-center">
+                        <Icon v-if="loading" name="line-md:loading-twotone-loop" />
+                        Login
+                    </button>
                 </div>
             </form>
         </div>
@@ -41,12 +45,14 @@ const form = ref(null);
 const email = ref('');
 const password = ref('');
 const errors = ref([]);
+const loading = ref(false);
 
 async function login() {
     if (!form.value.reportValidity()) {
         return;
     }
 
+    loading.value = true;
     const response = await fetch(useRuntimeConfig().public.apiBaseUrl + '/api/auth/login', {
         method: 'POST',
         headers: {
@@ -58,6 +64,8 @@ async function login() {
             password: password.value
         })
     });
+    loading.value = false;
+
     const body = await response.json();
 
     if (!response.ok) {

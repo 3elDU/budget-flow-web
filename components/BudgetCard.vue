@@ -6,18 +6,17 @@
 
         <div class="flex mt-auto">
             <button class="w-full p-0.5 flex justify-center bg-success rounded-l-md">
-                <Icon size="24" name="mdi:arrow-up"></Icon>
+                <Icon size="24" name="mdi:arrow-up" />
             </button>
             <button class="w-full p-0.5 flex justify-center bg-error">
-                <Icon size="24" name="mdi:arrow-down"></Icon>
+                <Icon size="24" name="mdi:arrow-down" />
             </button>
-            <button class="w-full p-0.5 flex justify-center bg-secondary">
-                <Icon size="24" name="mdi:edit" @click="editBudget"></Icon>
+            <button class="w-full p-0.5 flex justify-center bg-secondary" @click="editBudget">
+                <Icon size="24" name="mdi:edit" />
             </button>
             <button class="w-full p-0.5 flex justify-center bg-error rounded-r-md" @click="deleteBudget()">
                 <ModalsConfirmation ref="confirmationModal" v-model="modal" intent="Are you sure to delete this budget?" />
-                <!-- <ModalsErrorModal v-if="error" :error="error" v-model="error" /> -->
-                <Icon size="24" name="mdi:delete"></Icon>
+                <Icon size="24" :name="deleting ? 'line-md:loading-twotone-loop' : 'mdi:delete'" />
             </button>
         </div>
     </div>
@@ -31,6 +30,7 @@ const props = defineProps({ 'budget': Object });
 
 const confirmationModal = ref();
 const modal = ref(false);
+const deleting = ref(false);
 
 const balance = computed(() => {
     return new Intl.NumberFormat(navigator.language, {
@@ -47,14 +47,20 @@ function editBudget() {
 }
 
 async function deleteBudget() {
+    if (deleting.value) {
+        return;
+    }
+
     modal.value = true;
 
     const confirmed = await confirmationModal.value.ask();
 
     if (confirmed) {
+        deleting.value = true;
         await useAPIOfetch(`/api/budgets/${props.budget.id}`, {
             method: "DELETE"
         }).then(() => {
+            deleting.value = false;
             useNuxtApp().$bus.emit('refetch');
         }, (err) => {
             console.log(err);

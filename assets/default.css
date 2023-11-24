@@ -7,11 +7,11 @@ button {
 }
 
 .btn-default {
-    @apply px-3 py-2 flex gap-2 justify-center items-center font-semibold text-primaryfg disabled:text-secondaryfg bg-primary disabled:bg-primary-d rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
+    @apply px-3 py-2 flex gap-2 justify-center items-center font-semibold text-primaryfg disabled:brightness-50 bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
 }
 
 .btn-small {
-    @apply px-3 py-1.5 flex gap-2 justify-center items-center font-semibold text-primaryfg bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
+    @apply px-3 py-1.5 flex gap-2 justify-center items-center font-semibold text-primaryfg disabled:brightness-50 bg-primary rounded-md hover:outline hover:outline-2 hover:outline-primaryfg/50;
 }
 
 .input-default {

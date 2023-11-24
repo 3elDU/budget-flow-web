@@ -3,10 +3,15 @@
         <p class="text-xl font-bold">
             {{ props.label }}
         </p>
+
         <Line :data="props.data" :options="chartOptions" class="transition-opacity duration-300 ease-in-out"
-            :style="singleDataPoint ? 'opacity: 0' : null" />
-        <div v-if="singleDataPoint" class="absolute mx-8 top-1/2 -translate-y-1/3 flex flex-col sm:flex-row gap-4">
-            <div v-for="dataset in data.datasets" class="text-center">
+            :style="hideChart ? 'opacity: 0' : null" />
+
+        <div class="absolute mx-8 top-1/2 -translate-y-1/3 flex flex-col sm:flex-row gap-4">
+            <div v-if="props.loading">
+                <Icon size="24" name="line-md:loading-twotone-loop" />
+            </div>
+            <div v-else-if="singleDataPoint" v-for="dataset in data.datasets" class="text-center">
                 <div class="text-2xl font-bold">{{
                     props.currency
                     ? currencyFormatter.format(dataset.data[0])
@@ -28,7 +33,11 @@ const props = defineProps({
         required: true,
     },
     data: {
-        required: true,
+        type: Object
+    },
+    loading: {
+        type: Boolean,
+        default: false,
     },
     // USD, EUR, UAH, etc...
     currency: {
@@ -43,6 +52,8 @@ const currencyFormatter = new Intl.NumberFormat(navigator.language, {
 });
 
 const singleDataPoint = computed(() => props?.data?.datasets[0]?.data?.length === 1);
+
+const hideChart = computed(() => singleDataPoint.value || props.loading)
 
 // Registering required library functionality
 ChartJS.register(Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale, Colors);

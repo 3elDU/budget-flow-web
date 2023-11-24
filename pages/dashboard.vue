@@ -14,7 +14,12 @@
                 <span class="font-semibold">Create new budget</span>
                 <ModalsCreateEditBudget v-model="modal" v-if="modal" />
             </div>
-            <BudgetCard v-for="budget in budgets" :budget="budget" class="w-full"></BudgetCard>
+
+            <div v-if="pending" class="flex justify-center items-center p-4 gap-2">
+                <Icon size="24" name="line-md:loading-twotone-loop" />
+                Loading budgets
+            </div>
+            <BudgetCard v-else v-for="budget in budgets" :budget="budget" class="w-full"></BudgetCard>
         </div>
     </div>
 </template>
@@ -22,7 +27,7 @@
 <script setup>
 const modal = ref(false);
 
-let { data: budgets, error, refresh } = await useAPIFetch('/api/budgets');
+let { pending, data: budgets, error, refresh } = await useAPIFetch('/api/budgets', { lazy: true });
 
 useNuxtApp().$bus.on('refetch', refresh);
 

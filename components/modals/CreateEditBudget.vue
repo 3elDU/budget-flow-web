@@ -39,10 +39,13 @@
             </form>
 
             <div class="flex gap-2">
-                <button :disabled="!formValid" @click="submit" class="btn-default sm:w-fit w-full">
+                <button :disabled="!formValid" @click="submit" class="btn-default sm:w-fit w-full flex gap-2">
+                    <Icon v-if="pending" name="line-md:loading-twotone-loop" />
                     {{ buttonLabel }}
                 </button>
-                <button class="btn-default !bg-error sm:w-fit w-full" @click="modal.close()">Cancel</button>
+                <button class="btn-default !bg-error sm:w-fit w-full" @click="modal.close()" :disabled="pending">
+                    Cancel
+                </button>
             </div>
         </div>
     </ModalsBase>
@@ -51,6 +54,7 @@
 <script setup>
 import ErrorModal from './ErrorModal.vue';
 
+const pending = ref(false);
 const modal = ref();
 const errorModal = ref(false);
 const error = ref();
@@ -67,12 +71,14 @@ const props = defineProps({
 /** @type {Ref<HTMLFormElement?>} */
 const form = ref();
 
-let budget = props.budget_id ? props.budget : reactive({
-    name: '',
-    description: null,
-    color_hex: '#c64600',
-    currency_iso: 'USD'
-})
+let budget = props.budget_id
+    ? structuredClone(toRaw(props.budget))
+    : reactive({
+        name: '',
+        description: null,
+        color_hex: '#c64600',
+        currency_iso: 'USD'
+    })
 
 const formValid = props.budget_id
     ? ref(true)
@@ -99,11 +105,17 @@ const buttonLabel = computed(() => {
 })
 
 async function submit() {
+    // Do not repeat a request if it is already pending
+    if (pending.value) {
+        return;
+    }
+
     const route = props.budget_id
         ? `/api/budgets/${props.budget_id}`
         : '/api/budgets';
     const method = props.budget_id ? 'PUT' : 'POST';
 
+    pending.value = true;
     useAPIOfetch(route, {
         method: method,
         body: JSON.stringify(budget)

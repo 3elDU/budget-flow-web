@@ -1,10 +1,9 @@
 <template>
     <Teleport to="#modals" v-if="modelValue">
-        <div class="fixed inset-x-0 bottom-0 overflow-y-auto bg-black bg-opacity-50">
-            <div ref="flexElement" @click="click($event)"
-                class="flex justify-center sm:items-center items-end min-h-screen">
-                <div class="bg-secondary sm:rounded-lg rounded-t-2xl max-w-md w-full p-6 shadow-xl" role="dialog"
-                    aria-modal="true">
+        <div class="z-30 fixed inset-0 bg-black bg-opacity-50">
+            <div ref="flexElement" @click="click($event)" class="flex justify-center sm:items-center items-end h-full">
+                <div class="bg-secondary sm:rounded-lg rounded-t-2xl max-w-md w-full p-6 shadow-xl max-h-[80%] overflow-y-auto"
+                    role="dialog" aria-modal="true">
                     <slot />
                 </div>
             </div>

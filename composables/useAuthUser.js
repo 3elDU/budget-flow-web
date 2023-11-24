@@ -1,3 +1,5 @@
+const cached = useSessionStorage('user', { fetched: false })
+
 /**
  * Returns the authenticated user object
  * @returns {Promise<Ref<Object>>} ref
@@ -7,7 +9,9 @@
  * @returns {string} ref.value.email
  */
 export default async function useAuthUser() {
-    const { data: user } = await useAPIFetch('/api/users/me');
+    if (cached.value.fetched === false) {
+        cached.value = await useAPIOfetch('/api/users/me');
+    }
 
-    return user;
+    return cached;
 }
