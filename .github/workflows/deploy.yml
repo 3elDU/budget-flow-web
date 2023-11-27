@@ -36,5 +36,8 @@ jobs:
           host: ${{ secrets.SSH_HOST }}
           user: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          first_ssh: |
+            rm -rf $APP_DIR
+            mkdir -p $APP_DIR
           scp: |
             './dist/*' => $APP_DIR/
