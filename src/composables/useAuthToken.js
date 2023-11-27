@@ -1,3 +1,5 @@
+import { useLocalStorage } from "@vueuse/core";
+
 export default function useAuthToken() {
     /** @type {Ref<string|null>} */
     const authToken = useLocalStorage('token', () => null);

@@ -1,26 +1,27 @@
 <template>
     <div class="mx-4 flex flex-col gap-6">
-        <Title>Analytics</Title>
         <div class="flex flex-col sm:flex-row flex-wrap gap-4">
             <div class="flex gap-4">
                 <label class="block w-full sm:w-fit">
                     <span class="text-sm">Start date</span>
-                    <input type="date" class="w-full sm:w-fit input-default mt-1" v-model="startTime" @submit="refreshData">
+                    <input type="date" class="w-full sm:w-fit input-default mt-1" v-model="startTime"
+                        @change="refreshData()">
                 </label>
                 <label class="block w-full sm:w-fit">
                     <span class="text-sm">End date</span>
-                    <input type="date" class="w-full sm:w-fit input-default mt-1" v-model="endTime" @submit="refreshData">
+                    <input type="date" class="w-full sm:w-fit input-default mt-1" v-model="endTime" @change="refreshData()">
                 </label>
             </div>
             <label class="block">
                 <span class="text-sm">Period</span>
-                <select class="select-default mt-1" v-model="period" @submit="refreshData">
+                <select class="select-default mt-1" v-model="period" @change="refreshData()">
                     <option v-for="period in periods" :value="period[0]">
                         {{ period[1] }}
                     </option>
                 </select>
             </label>
         </div>
+
 
         <div v-if="error">
             <p class="text-xl font-bold">No analytics available</p>
@@ -38,6 +39,11 @@
 </template>
 
 <script setup>
+import { ref, computed } from 'vue';
+import useAuthUser from '../composables/useAuthUser';
+import { useAPIFetch } from '../composables/useAPIFetch';
+import { useDebounceFn } from '@vueuse/core';
+
 const user = await useAuthUser();
 
 const periods = [
@@ -53,16 +59,24 @@ const period = ref("day");
 const startTime = ref(null);
 const endTime = ref(null);
 
-const { pending, data, error, refresh } = await useAPIFetch('/api/analytics', {
-    lazy: true,
+const { pending, data, error, refresh } = useAPIFetch('/api/analytics', {
     params: {
-        period: period,
-        start_time: startTime,
-        end_time: endTime
+        period: period.value,
+        start_time: startTime.value,
+        end_time: endTime.value,
     }
-});
+})
+
 // Wrap refresh in a debounce function to not send too many requests
-const refreshData = useDebounceFn(refresh, 1000);
+const refreshData = useDebounceFn(() => {
+    refresh({
+        params: {
+            period: period.value,
+            start_time: startTime.value,
+            end_time: endTime.value
+        }
+    })
+}, 1000);
 
 const dateFormatter = Intl.DateTimeFormat(navigator.language);
 

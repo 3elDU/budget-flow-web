@@ -9,7 +9,7 @@
 
         <div class="absolute mx-8 top-1/2 -translate-y-1/3 flex flex-col sm:flex-row gap-4">
             <div v-if="props.loading">
-                <Icon size="24" name="line-md:loading-twotone-loop" />
+                <IconLineMdLoadingTwotoneLoop font-size="24" />
             </div>
             <div v-else-if="singleDataPoint" v-for="dataset in data.datasets" class="text-center">
                 <div class="text-2xl font-bold">{{
@@ -24,6 +24,7 @@
 </template>
 
 <script setup>
+import { computed } from 'vue';
 import { Line } from 'vue-chartjs'
 import { Chart as ChartJS, Title, Tooltip, LineController, LineElement, PointElement, CategoryScale, LinearScale, Colors } from 'chart.js'
 

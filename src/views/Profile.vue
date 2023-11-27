@@ -1,12 +1,10 @@
 <template>
     <div class="px-5 flex flex-col items-center md:items-start">
-        <Title>Profile</Title>
-
         <h1 class="font-bold text-3xl mb-4">{{ user.name }}</h1>
 
         <div v-if="pending" class="flex gap-2">
             Loading user settings
-            <Icon size="24" name="line-md:loading-twotone-loop" />
+            <IconLineMdLoadingTwotoneLoop font-size="24" />
         </div>
         <form v-else class="w-full max-w-[350px] grid grid-cols-1 gap-4">
             <label class="block">
@@ -29,17 +27,17 @@
                 <Transition name="fade">
                     <div v-if="editing" class="flex gap-2">
                         <button class="btn-default" @click.prevent="saveChanges">
-                            <Icon v-if="saving" name="line-md:loading-twotone-loop" />
-                            <Icon v-else name="mdi:content-save" />
+                            <IconLineMdLoadingTwotoneLoop v-if="saving" />
+                            <IconMdiContentSave v-else />
                             Save
                         </button>
                         <button class="btn-default !bg-error" @click.prevent="editing = false" :disabled="saving">
-                            <Icon name="mdi:delete" />
+                            <IconMdiDelete />
                             Cancel
                         </button>
                     </div>
                     <button v-else class="btn-default" @click.prevent="editing = true">
-                        <Icon name="mdi:edit" />
+                        <IconMdiEdit />
                         Edit
                     </button>
                 </Transition>
@@ -49,8 +47,12 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+import useAuthUser from '../composables/useAuthUser';
+import { useAPIFetch, useAPIOfetch } from '../composables/useAPIFetch';
+
 const user = await useAuthUser();
-const { data: settings, pending } = await useAPIFetch('/api/users/me/settings', { lazy: true });
+const { data: settings, pending } = useAPIFetch('/api/users/me/settings');
 const saving = ref(false);
 const editing = ref(false);
 
@@ -66,7 +68,7 @@ async function saveChanges() {
     }
 
     saving.value = true;
-    await useAPIFetch('/api/users/me/settings', {
+    await useAPIOfetch('/api/users/me/settings', {
         method: 'PUT', body: settings.value,
     });
     saving.value = false;

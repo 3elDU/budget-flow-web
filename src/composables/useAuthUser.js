@@ -1,3 +1,6 @@
+import { useSessionStorage } from "@vueuse/core";
+import {useAPIOfetch} from './useAPIFetch';
+
 const cached = useSessionStorage('user', { fetched: false })
 
 /**

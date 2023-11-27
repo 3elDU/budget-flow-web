@@ -1,6 +1,6 @@
 <template>
     <ModalsBase persistent ref="modal">
-        <ErrorModal v-if="error" v-model="errorModal" :error="error" />
+        <ModalsError v-if="error" v-model="errorModal" :error="error" />
 
         <div class="flex flex-col gap-8">
             <p class="text-sm font-bold">
@@ -40,7 +40,7 @@
 
             <div class="flex gap-2">
                 <button :disabled="!formValid" @click="submit" class="btn-default sm:w-fit w-full flex gap-2">
-                    <Icon v-if="pending" name="line-md:loading-twotone-loop" />
+                    <IconLineMdLoadingTwotoneLoop v-if="pending" />
                     {{ buttonLabel }}
                 </button>
                 <button class="btn-default !bg-error sm:w-fit w-full" @click="modal.close()" :disabled="pending">
@@ -52,7 +52,10 @@
 </template>
 
 <script setup>
-import ErrorModal from './ErrorModal.vue';
+import { ref, reactive, toRaw, computed, inject } from 'vue';
+import { useAPIOfetch } from '../../composables/useAPIFetch';
+
+const bus = inject('bus');
 
 const pending = ref(false);
 const modal = ref();
@@ -68,7 +71,7 @@ const props = defineProps({
     }
 });
 
-/** @type {Ref<HTMLFormElement?>} */
+/** @type {import('vue').Ref<HTMLFormElement?>} */
 const form = ref();
 
 let budget = props.budget_id
@@ -121,11 +124,14 @@ async function submit() {
         body: JSON.stringify(budget)
     })
         .then(() => {
-            useNuxtApp().$bus.emit('refetch');
+            bus.emit('refetch');
             modal.value.close();
         }, (err) => {
             errorModal.value = true;
             error.value = err;
+        })
+        .finally(() => {
+            pending.value = false;
         })
 }
 </script>

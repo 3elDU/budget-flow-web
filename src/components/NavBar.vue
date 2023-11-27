@@ -8,34 +8,35 @@
         </div>
 
         <div class="flex flex-row pl-6 gap-12">
-            <NuxtLink v-for="link in links" :to="link.to">
+            <RouterLink v-for="link in links" :to="link.to">
                 {{ link.name }}
-            </NuxtLink>
+            </RouterLink>
         </div>
 
         <div class="ml-auto flex flex-row pr-6 gap-12 items-center">
-            <NuxtLink to="/profile" :title="user.email" class="truncate">{{ user.name }}</NuxtLink>
+            <RouterLink to="/profile" :title="user.email" class="truncate">{{ user.name }}</RouterLink>
             <button @click="logout">Log out</button>
         </div>
     </nav>
     <div v-else class="mb-16 relative">
         <div class="fixed top-0 z-30 w-full h-16 bg-primarybg"></div>
         <button @click="toggleSidebar" class="fixed z-50 top-4 left-4">
-            <Icon :name="sidebarOpen ? 'mdi:close' : 'mdi:menu'" size="32" />
+            <IconMdiClose v-if="sidebarOpen" width="32" height="32" />
+            <IconMdiMenu v-else width="32" height="32" />
         </button>
         <Transition name="sidebar">
             <nav v-if="sidebarOpen"
                 class="fixed inset-0 z-40 w-full sm:max-w-sm h-full bg-secondary shadow-2xl flex flex-col px-6 pt-4 gap-6 font-bold text-2xl">
 
                 <div class="ml-auto">
-                    <NuxtLink to="/profile" :title="user.email" @click="toggleSidebar">
+                    <RouterLink to="/profile" :title="user.email" @click="toggleSidebar">
                         {{ user.name }}
-                    </NuxtLink>
+                    </RouterLink>
                 </div>
 
-                <NuxtLink v-for="link in links" :to="link.to" @click="toggleSidebar">
+                <RouterLink v-for="link in links" :to="link.to" @click="toggleSidebar">
                     {{ link.name }}
-                </NuxtLink>
+                </RouterLink>
 
                 <div class="mt-8 flex flex-col gap-6 justify-left">
                     <button @click="logout">Log out</button>
@@ -46,7 +47,15 @@
 </template>
 
 <script setup>
+import useAuthUser from '../composables/useAuthUser';
+import { useMediaQuery, useThrottleFn } from '@vueuse/core';
+import { ref } from 'vue';
+import useIsAuthenticated from '../composables/useIsAuthenticated';
+import { useAPIOfetch } from '../composables/useAPIFetch';
+import { RouterLink, useRouter } from 'vue-router';
 const user = await useAuthUser();
+
+const router = useRouter();
 
 const links = [
     { "name": "Home", "to": "/dashboard" },
@@ -63,11 +72,11 @@ const toggleSidebar = useThrottleFn(() => {
     sidebarOpen.value = !sidebarOpen.value;
 }, 350);
 
-async function logout() {
+function logout() {
     const { setIsAuthenticated } = useIsAuthenticated();
-    await useAPIFetch('/api/logout', { method: 'POST' });
+    useAPIOfetch('/api/logout', { method: 'POST' });
     setIsAuthenticated(false);
-    await navigateTo('/login');
+    router.push('login');
 }
 </script>
 

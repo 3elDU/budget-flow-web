@@ -12,6 +12,8 @@
 </template>
 
 <script setup>
+import { ref } from 'vue';
+
 const { intent, confirmation } = defineProps({
     intent: {
         type: String,

@@ -1,5 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 html {
-    @apply font-sans text-primaryfg bg-primarybg;
+    font-family: 'Inter Variable', sans-serif;
+    @apply text-primaryfg bg-primarybg;
 }
 
 button {

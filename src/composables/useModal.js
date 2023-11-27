@@ -1,3 +1,5 @@
+import { ref, reactive, markRaw } from "vue";
+
 const modals = ref([]);
 
 export default function useModal() {

@@ -1,3 +1,5 @@
+import { useLocalStorage } from "@vueuse/core";
+
 export default function () {
     /** @type {Ref<boolean>} */
     const isAuthenticated = useLocalStorage('isAuthenticated', () => false);

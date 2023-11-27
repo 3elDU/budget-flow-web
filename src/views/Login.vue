@@ -1,6 +1,5 @@
 <template>
     <div class="h-screen flex justify-center items-center" @keypress.enter="login">
-        <Title>Login</Title>
         <div class="flex flex-col items-left mx-4 w-full max-w-[300px]">
             <h1 class="text-lg font-semibold">Login</h1>
             <form ref="form">
@@ -23,7 +22,7 @@
                 <div class="mt-6 text-right">
                     <button type="button" @click="login"
                         class="btn-small px-5 py-1.5 flex gap-2 justify-center items-center">
-                        <Icon v-if="loading" name="line-md:loading-twotone-loop" />
+                        <IconLineMdLoadingTwotoneLoop v-if="loading" />
                         Login
                     </button>
                 </div>
@@ -33,12 +32,18 @@
 </template>
 
 <script setup>
+import useIsAuthenticated from '../composables/useIsAuthenticated';
+import useAuthToken from '../composables/useAuthToken';
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+
+const router = useRouter();
 const { setAuthToken } = useAuthToken()
 const { isAuthenticated, setIsAuthenticated } = useIsAuthenticated();
 
 // If the user is already authenticated, redirect to dashboard
 if (isAuthenticated.value === true) {
-    await navigateTo('/dashboard');
+    router.push('dashboard');
 }
 
 const form = ref(null);
@@ -53,7 +58,7 @@ async function login() {
     }
 
     loading.value = true;
-    const response = await fetch(useRuntimeConfig().public.apiBaseUrl + '/api/auth/login', {
+    const response = await fetch(import.meta.env.VITE_API_ROOT + '/api/auth/login', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -81,7 +86,7 @@ async function login() {
         setAuthToken(body.token);
         setIsAuthenticated(true);
 
-        await navigateTo('/dashboard');
+        await router.push('dashboard');
     }
 }
 </script>
