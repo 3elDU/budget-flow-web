@@ -1,7 +1,7 @@
 import { useSessionStorage } from "@vueuse/core";
-import {useAPIOfetch} from './useAPIFetch';
+import { useAPIOfetch } from "./useAPIFetch";
 
-const cached = useSessionStorage('user', { fetched: false })
+const cached = useSessionStorage("user", { fetched: false });
 
 /**
  * Returns the authenticated user object
@@ -12,9 +12,9 @@ const cached = useSessionStorage('user', { fetched: false })
  * @returns {string} ref.value.email
  */
 export default async function useAuthUser() {
-    if (cached.value.fetched === false) {
-        cached.value = await useAPIOfetch('/api/users/me');
-    }
+  if (cached.value.fetched === false) {
+    cached.value = await useAPIOfetch("/api/users/me");
+  }
 
-    return cached;
+  return cached;
 }
