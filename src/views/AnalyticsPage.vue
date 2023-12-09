@@ -1,62 +1,55 @@
 <template>
-  <div class="mx-4 flex flex-col gap-6">
+  <div class="p-4 flex flex-col gap-6">
     <div class="flex flex-col sm:flex-row flex-wrap gap-4">
       <div class="flex gap-4">
-        <label class="block w-full sm:w-fit">
-          <span class="text-sm">Start date</span>
-          <input
-            type="date"
-            class="w-full sm:w-fit input-default mt-1"
-            v-model="startTime"
-            @change="refreshData()"
-          />
-        </label>
-        <label class="block w-full sm:w-fit">
-          <span class="text-sm">End date</span>
-          <input
-            type="date"
-            class="w-full sm:w-fit input-default mt-1"
-            v-model="endTime"
-            @change="refreshData()"
-          />
-        </label>
+        <div class="w-full sm:w-fit">
+          <label class="text-sm mr-2" for="startDate">Start date</label>
+
+          <Calendar v-model="startTime" @update:model-value="refreshData()" id="startDate" />
+        </div>
+
+        <div class="w-full sm:w-fit">
+          <label class="text-sm mr-2" for="endDate">End date</label>
+
+          <Calendar v-model="endTime" @update:model-value="refreshData()" id="endDate" />
+        </div>
       </div>
-      <label class="block">
-        <span class="text-sm">Period</span>
-        <select
-          class="select-default mt-1"
+
+      <div>
+        <label class="text-sm mr-2" for="period">Period</label>
+        <Dropdown
+          :options="periods"
           v-model="period"
           @change="refreshData()"
-        >
-          <option v-for="period in periods" :value="period[0]" :key="period">
-            {{ period[1] }}
-          </option>
-        </select>
-      </label>
+          id="period"
+          option-label="label"
+          option-value="value"
+        />
+      </div>
     </div>
 
-    <div v-if="error">
+    <div v-if="isError">
       <p class="text-xl font-bold">No analytics available</p>
     </div>
 
-    <div v-if="data" class="flex flex-row flex-wrap gap-4 justify-center">
+    <div class="flex flex-row flex-wrap gap-4 justify-center">
       <LineChart
-        :loading="pending"
-        :currency="user.settings.preferred_currency_iso"
+        :loading="isLoading"
+        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
         :data="chartData.income"
         label="Income"
         class="w-full max-w-2xl"
       />
       <LineChart
-        :loading="pending"
-        :currency="user.settings.preferred_currency_iso"
+        :loading="isLoading"
+        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
         :data="chartData.expense"
         label="Expense"
         class="w-full max-w-2xl"
       />
       <LineChart
-        :loading="pending"
-        :currency="user.settings.preferred_currency_iso"
+        :loading="isLoading"
+        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
         :data="chartData.balance"
         label="Balance"
         class="w-full max-w-2xl"
@@ -66,44 +59,56 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import useAuthUser from "../composables/useAuthUser";
-import { useAPIFetch } from "../composables/useAPIFetch";
-import { useDebounceFn } from "@vueuse/core";
+import { ref, computed } from 'vue';
+import { useDebounceFn } from '@vueuse/core';
+import { useUserStore } from '@/stores/userStore.js';
+import api from '@/plugins/api.js';
 
-const user = await useAuthUser();
+const userStore = useUserStore();
+
+const user = userStore.user;
 
 const periods = [
-  ["day", "Day"],
-  ["week", "Week"],
-  ["month", "Month"],
-  ["quarter", "Quarter"],
-  ["year", "Year"],
-  ["all", "All"],
+  { label: 'Day', value: 'day' },
+  { label: 'Week', value: 'week' },
+  { label: 'Month', value: 'month' },
+  { label: 'Quarter', value: 'quarter' },
+  { label: 'Year', value: 'year' },
+  { label: 'All', value: 'all' },
 ];
 
-const period = ref("day");
+const period = ref('day');
 const startTime = ref(null);
 const endTime = ref(null);
+const isLoading = ref(false);
+const isError = ref(false);
 
-const { pending, data, error, refresh } = useAPIFetch("/api/analytics", {
-  params: {
-    period: period.value,
-    start_time: startTime.value,
-    end_time: endTime.value,
-  },
-});
+const data = ref([]);
 
-// Wrap refresh in a debounce function to not send too many requests
-const refreshData = useDebounceFn(() => {
-  refresh({
+async function fetchAnalytics() {
+  isLoading.value = true;
+
+  const response = await api.get('analytics', {
     params: {
       period: period.value,
       start_time: startTime.value,
       end_time: endTime.value,
     },
   });
-}, 1000);
+
+  if (response.status === 200) {
+    data.value = response.data;
+  } else {
+    isError.value = true;
+  }
+
+  isLoading.value = false;
+}
+
+fetchAnalytics();
+
+// Wrap refresh in a debounce function to not send too many requests
+const refreshData = useDebounceFn(fetchAnalytics, 1000);
 
 const dateFormatter = Intl.DateTimeFormat(navigator.language);
 
@@ -120,11 +125,15 @@ const chartData = computed(() => {
   const incomeChartData = {
     labels: labels,
     datasets: [
-      { label: "Income", data: incomeData, borderColor: "rgb(70, 255, 70)" },
       {
-        label: "Average income",
+        label: 'Income',
+        data: incomeData,
+        borderColor: "rgb(70, 255, 70)",
+      },
+      {
+        label: 'Average income',
         data: averageIncomeData,
-        borderColor: "rgba(70, 255, 70, 0.6)",
+        borderColor: 'rgba(70, 255, 70, 0.6)',
       },
     ],
   };
@@ -135,7 +144,11 @@ const chartData = computed(() => {
   const expenseChartData = {
     labels: labels,
     datasets: [
-      { label: "Expense", data: expenseData, borderColor: "rgb(255, 70, 70)" },
+      {
+        label: 'Expense',
+        data: expenseData,
+        borderColor: 'rgb(255, 70, 70)'
+      },
       {
         label: "Average expense",
         data: averageExpenseData,

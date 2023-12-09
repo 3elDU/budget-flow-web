@@ -1,10 +1,21 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@layer tailwind-base, primevue, tailwind-utilities;
+
+@layer tailwind-base {
+  @tailwind base;
+}
+
+@layer tailwind-utilities {
+  @tailwind components;
+  @tailwind utilities;
+}
 
 html {
   font-family: "Inter Variable", sans-serif;
   @apply text-primaryfg bg-primarybg;
+}
+
+html, body {
+  @apply h-full;
 }
 
 button {
@@ -32,13 +43,23 @@ button {
 }
 
 .color-select-default {
-  @apply block rounded-full border-2 border-primary disabled:border-secondary-d focus:ring-0 focus:outline-none;
+  @apply block rounded focus:ring-0 focus:outline-none h-[50px] flex-none;
 }
 
 .color-select-default::-webkit-color-swatch {
-  @apply border-0 rounded-full;
+  @apply border-0 rounded;
 }
 
 .color-select-default::-moz-color-swatch {
-  @apply border-0 rounded-full;
+  @apply border-0 rounded;
+}
+
+.v-enter-active,
+.v-leave-active {
+  transition: opacity .2s ease-in-out;
+}
+
+.v-enter-from,
+.v-leave-to {
+  opacity: 0;
 }

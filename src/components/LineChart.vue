@@ -1,10 +1,6 @@
 <template>
-  <div
-    class="relative p-4 bg-secondary rounded-2xl flex flex-col items-center gap-4"
-  >
-    <p class="text-xl font-bold">
-      {{ props.label }}
-    </p>
+  <div class="relative p-4 bg-secondary rounded-2xl flex flex-col items-center gap-4">
+    <p class="text-xl font-bold">{{ props.label }}</p>
 
     <Line
       :data="props.data"
@@ -13,9 +9,7 @@
       :style="hideChart ? 'opacity: 0' : null"
     />
 
-    <div
-      class="absolute mx-8 top-1/2 -translate-y-1/3 flex flex-col sm:flex-row gap-4"
-    >
+    <div class="absolute mx-8 top-1/2 -translate-y-1/3 flex flex-col sm:flex-row gap-4">
       <div v-if="props.loading">
         <IconLineMdLoadingTwotoneLoop font-size="24" />
       </div>
@@ -26,11 +20,7 @@
         class="text-center"
       >
         <div class="text-2xl font-bold">
-          {{
-            props.currency
-              ? currencyFormatter.format(dataset.data[0])
-              : dataset.data[0]
-          }}
+          {{ props.currency ? currencyFormatter.format(dataset.data[0]) : dataset.data[0] }}
         </div>
         <div>{{ dataset.label }}</div>
       </div>
@@ -39,8 +29,8 @@
 </template>
 
 <script setup>
-import { computed } from "vue";
-import { Line } from "vue-chartjs";
+import { computed } from 'vue';
+import { Line } from 'vue-chartjs';
 import {
   Chart as ChartJS,
   Title,
@@ -51,7 +41,7 @@ import {
   CategoryScale,
   LinearScale,
   Colors,
-} from "chart.js";
+} from 'chart.js';
 
 const props = defineProps({
   label: {
@@ -72,8 +62,8 @@ const props = defineProps({
   },
 });
 const currencyFormatter = new Intl.NumberFormat(navigator.language, {
-  style: "currency",
-  currency: props.currency ?? "USD",
+  style: 'currency',
+  currency: props.currency ?? 'USD',
   minimumFractionDigits: 0,
 });
 
@@ -114,7 +104,7 @@ if (props.currency) {
           label: function (context) {
             return (
               context.dataset.label +
-              ": " +
+              ': ' +
               currencyFormatter.format(context.parsed.y)
             );
           },

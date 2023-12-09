@@ -1,64 +1,32 @@
 <template>
-  <div class="px-5 flex flex-col items-center md:items-start">
+  <div class="p-4 flex flex-col items-center md:items-start">
     <h1 class="font-bold text-3xl mb-4">{{ user.name }}</h1>
 
-    <div v-if="pending" class="flex gap-2">
-      Loading user settings
-      <IconLineMdLoadingTwotoneLoop font-size="24" />
-    </div>
-    <form v-else class="w-full max-w-[350px] grid grid-cols-1 gap-4">
-      <label class="block">
-        <span for="preferred_currency" class="text-sm">Preferred currency</span>
-        <select
-          :disabled="!editing"
-          class="select-default mt-1 w-full"
-          name="preferred_currency"
+    <form class="w-full max-w-[350px] grid grid-cols-1 gap-4">
+      <div>
+        <label for="preferredCurrencyIso" class="block text-sm">Preferred currency</label>
+
+        <Dropdown
+          :disabled="!isEditMode || isLoading"
+          :options="currenciesList"
           v-model="settings.preferred_currency_iso"
-        >
-          <option
-            v-for="currency in currenciesList"
-            :key="currency.id"
-            :value="currency"
-          >
-            {{ currency }}
-          </option>
-        </select>
-      </label>
-
-      <label class="inline-flex items-center">
-        <input
-          :disabled="!editing"
-          class="checkbox-default mr-1"
-          type="checkbox"
-          name="show_fractional"
-          v-model="settings.show_fractional"
+          id="preferredCurrencyIso"
         />
-        <span class="ml-1 text-sm" for="show_fractional"
-          >Show fractional numbers</span
-        >
-      </label>
+      </div>
 
-      <div class="relative ml-auto md:ml-0 mt-4 flex">
-        <Transition name="fade">
-          <div v-if="editing" class="flex gap-2">
-            <button class="btn-default" @click.prevent="saveChanges">
-              <IconLineMdLoadingTwotoneLoop v-if="saving" />
-              <IconMdiContentSave v-else />
-              Save
-            </button>
-            <button
-              class="btn-default !bg-error"
-              @click.prevent="editing = false"
-              :disabled="saving"
-            >
-              <IconMdiDelete />
-              Cancel
-            </button>
+      <div>
+        <Checkbox :disabled="!isEditMode || isLoading" v-model="settings.show_fractional" id="showFractional" />
+
+        <label for="showFractional" class="ml-2 text-sm">Show fractional numbers</label>
+      </div>
+
+      <div class="ml-auto md:ml-0 mt-4 flex">
+        <Transition mode="out-in">
+          <div v-if="isEditMode" class="flex gap-2">
+            <Button @click.prevent="saveChanges" label="Save" severity="success" :loading="isLoading" />
+            <Button @click.prevent="isEditMode = false" label="Cancel" severity="danger" :loading="isLoading" />
           </div>
-          <button v-else class="btn-default" @click.prevent="editing = true">
-            <IconMdiEdit />
-            Edit
-          </button>
+          <Button v-else @click.prevent="isEditMode = true" label="Edit" />
         </Transition>
       </div>
     </form>
@@ -66,50 +34,36 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import useAuthUser from "../composables/useAuthUser";
-import { useAPIFetch, useAPIOfetch } from "../composables/useAPIFetch";
+import { ref, toRaw } from 'vue';
+import { useUserStore } from '@/stores/userStore.js';
+import api from '@/plugins/api.js';
+import { useToast } from 'primevue/usetoast';
 
-const user = await useAuthUser();
-const { data: settings, pending } = useAPIFetch("/api/users/me/settings");
-const saving = ref(false);
-const editing = ref(false);
+const toast = useToast();
+const userStore = useUserStore();
+const user = userStore.user;
+const isLoading = ref(false);
+const isEditMode = ref(false);
 
-const currenciesList = ["USD", "EUR", "UAH"];
+const settings = ref(structuredClone(toRaw(user.settings)));
+
+const currenciesList = ['USD', 'EUR', 'UAH'];
 
 async function saveChanges() {
-  if (saving.value) {
+  if (isLoading.value) {
     return;
   }
 
-  saving.value = true;
-  await useAPIOfetch("/api/users/me/settings", {
-    method: "PUT",
-    body: settings.value,
-  });
-  saving.value = false;
-  editing.value = false;
+  isLoading.value = true;
+
+  const response = await api.put('users/me/settings', settings.value);
+
+  if (response.status === 200) {
+    isEditMode.value = false;
+
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Settings saved', life: 3000 });
+  }
+
+  isLoading.value = false;
 }
 </script>
-
-<style scoped>
-.fade-enter-active,
-.fade-leave-active {
-  transition: all 200ms ease-in-out;
-}
-
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-
-.fade-leave-active {
-  position: absolute;
-}
-
-@media (max-width: 768px) {
-  .fade-leave-active {
-    right: 0;
-  }
-}
-</style>

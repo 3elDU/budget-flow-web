@@ -1,58 +1,51 @@
 <template>
   <div
-    class="bg-primary rounded-lg flex flex-col p-3 gap-1"
+    class="bg-primary rounded-lg p-2"
     :style="{ backgroundColor: props.budget.color_hex }"
   >
-    <div class="text-lg font-bold truncate" :title="props.budget.name">
-      {{ props.budget.name }}
-    </div>
-    <div class="text-sm truncate" :title="props.budget.description">
-      {{ props.budget.description }}
-    </div>
-    <div class="text-2xl font-black">{{ balance }}</div>
+    <div class="flex flex-col gap-1 rounded-lg p-2" style="background: rgba(0, 0, 0, .3)">
+      <div class="text-lg font-bold truncate" :title="props.budget.name">
+        {{ props.budget.name }}
+      </div>
 
-    <div class="flex mt-auto">
-      <button class="w-full p-0.5 flex justify-center bg-success rounded-l-md">
-        <IconMdiArrowUp font-size="24" />
-      </button>
-      <button class="w-full p-0.5 flex justify-center bg-error">
-        <IconMdiArrowDown font-size="24" />
-      </button>
-      <button
-        class="w-full p-0.5 flex justify-center bg-secondary"
-        @click="editBudget"
-      >
-        <IconMdiEdit font-size="24" />
-      </button>
-      <button
-        class="w-full p-0.5 flex justify-center bg-error rounded-r-md"
-        @click="deleteBudget()"
-      >
-        <ModalsConfirmationModal
-          ref="confirmationModal"
-          v-model="modal"
-          intent="Are you sure to delete this budget?"
-        />
-        <IconLineMdLoadingTwotoneLoop v-if="deleting" font-size="24" />
-        <IconMdiDelete v-else font-size="24" />
-      </button>
+      <div class="text-sm truncate h-5" :title="props.budget.description">
+        {{ props.budget.description }}
+      </div>
+
+      <div class="text-2xl font-black">{{ balance }}</div>
+
+      <div class="flex mt-auto p-buttonset">
+        <Button severity="success" :loading="isLoading" class="!w-full !flex justify-center py-1">
+          <IconMdiArrowUp font-size="24" />
+        </Button>
+
+        <Button severity="danger" :loading="isLoading" class="!w-full !flex justify-center py-1">
+          <IconMdiArrowDown font-size="24" />
+        </Button>
+
+        <Button severity="warning" @click="editBudget" :loading="isLoading" class="!w-full !flex justify-center py-1">
+          <IconMdiEdit font-size="24" />
+        </Button>
+
+        <Button severity="danger" @click="deleteBudget" :loading="isLoading" class="!w-full !flex justify-center py-1">
+          <IconMdiDelete font-size="24" />
+        </Button>
+      </div>
     </div>
+
+    <ModalsConfirmationModal ref="modal" />
   </div>
 </template>
 
 <script setup>
-import { ref, inject, computed } from "vue";
-import useModal from "../composables/useModal";
-import { useAPIOfetch } from "../composables/useAPIFetch";
-import CreateEditBudget from "./modals/CreateEditBudget.vue";
-import ErrorModal from "./modals/ErrorModal.vue";
+import { ref, computed } from 'vue';
+import api from '@/plugins/api.js';
 
-const bus = inject("bus");
+const emits = defineEmits(['refresh', 'edit']);
 const props = defineProps({ budget: Object });
 
-const confirmationModal = ref();
-const modal = ref(false);
-const deleting = ref(false);
+const modal = ref();
+const isLoading = ref(false);
 
 const balance = computed(() => {
   return new Intl.NumberFormat(navigator.language, {
@@ -62,41 +55,26 @@ const balance = computed(() => {
 });
 
 function editBudget() {
-  useModal().showModal(CreateEditBudget, {
-    budget_id: props.budget.id,
-    budget: props.budget,
-  });
+  emits('edit', props.budget);
 }
 
 async function deleteBudget() {
-  if (deleting.value) {
+  if (isLoading.value) {
     return;
   }
 
-  modal.value = true;
-
-  const confirmed = await confirmationModal.value.ask();
-
-  if (confirmed) {
-    deleting.value = true;
-    await useAPIOfetch(`/api/budgets/${props.budget.id}`, {
-      method: "DELETE",
-    })
-      .then(
-        () => {
-          bus.emit("refetch");
-        },
-        (err) => {
-          console.log(err);
-
-          useModal().showModal(ErrorModal, {
-            error: err,
-          });
-        }
-      )
-      .finally(() => {
-        deleting.value = false;
-      });
+  if (!await modal.value.confirm()) {
+    return;
   }
+
+  isLoading.value = true;
+
+  const response = await api.delete(`budgets/${props.budget.id}`);
+
+  if (response.status === 200) {
+    emits('refresh');
+  }
+
+  isLoading.value = false;
 }
 </script>

@@ -1,12 +1,15 @@
 <script setup>
-import { useRouter } from "vue-router";
-import useIsAuthenticated from "../composables/useIsAuthenticated";
-const { isAuthenticated } = useIsAuthenticated();
-const router = useRouter();
+import { useUserStore } from '@/stores/userStore.js';
+import router from '@/plugins/router.js';
+import { onMounted } from 'vue';
 
-if (isAuthenticated.value === true) {
-  router.push("dashboard");
-} else {
-  router.push("login");
-}
+const userStore = useUserStore();
+
+onMounted(() => {
+  if (userStore.isAuthenticated === true) {
+    router.push('dashboard');
+  } else {
+    router.push('login');
+  }
+});
 </script>

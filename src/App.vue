@@ -1,32 +1,20 @@
 <template>
-  <Suspense>
-    <div>
-      <!-- Show a navbar only if user is authenticated -->
-      <NavBar v-if="isAuthenticated" />
-      <RouterView />
+  <NavBar v-if="isAuthenticated" />
 
-      <div id="modals"></div>
+  <RouterView v-slot="{ Component }">
+    <transition mode="out-in">
+      <component :is="Component" />
+    </transition>
+  </RouterView>
 
-      <!-- Dynamic modals -->
-      <component
-        v-for="(modal, i) in modals"
-        :key="i"
-        :is="modal.component"
-        v-bind="modal.props"
-        :model-value="true"
-        @update:modelValue="hideModal"
-      />
-    </div>
-
-    <template #fallback> Loading... </template>
-  </Suspense>
+  <Toast position="bottom-right" />
 </template>
 
 <script setup>
-import NavBar from "./components/NavBar.vue";
-import { RouterView } from "vue-router";
-import useIsAuthenticated from "./composables/useIsAuthenticated";
-import useModal from "./composables/useModal";
-const { isAuthenticated } = useIsAuthenticated();
-const { modals, hideModal } = useModal();
+import NavBar from './components/NavBar.vue';
+import { RouterView } from 'vue-router';
+import { useUserStore } from '@/stores/userStore.js';
+import Toast from 'primevue/toast';
+
+const isAuthenticated = useUserStore().isAuthenticated;
 </script>

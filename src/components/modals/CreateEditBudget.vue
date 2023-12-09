@@ -1,165 +1,131 @@
 <template>
-  <ModalsBaseModal persistent ref="modal">
-    <ModalsErrorModal v-if="error" v-model="errorModal" :error="error" />
-
+  <Dialog
+    v-bind:visible="isVisible"
+    modal
+    :header="props.budget ? 'Edit budget' : 'Create budget'"
+    :pt="{ mask: { style: 'backdrop-filter: blur(2px)' } }"
+    :style="{ width: '400px' }"
+    @update:visible="close"
+  >
     <div class="flex flex-col gap-8">
-      <p class="text-sm font-bold">
-        {{ label }}
-      </p>
-
       <form ref="form" class="flex flex-col gap-4">
-        <label class="block">
-          <span class="text-sm">Name</span>
-          <input
-            v-model="budget.name"
-            @input="handleInput"
-            required
-            minlength="1"
-            maxlength="255"
-            class="mt-1 input-default w-full"
-          />
-        </label>
+        <div>
+          <label class="block text-sm text-secondaryfg" for="name">Name</label>
+          <InputText v-model="budgetForm.name" id="name" required class="w-full" />
+        </div>
 
-        <label class="block">
-          <span class="text-sm">Description (optional)</span>
-          <textarea
-            v-model="budget.description"
-            @input="handleInput"
-            minlength="1"
-            maxlength="4096"
-            class="mt-1 input-default h-24 w-full"
-          ></textarea>
-        </label>
+        <div>
+          <label class="block text-sm text-secondaryfg" for="description">Description (optional)</label>
+          <Textarea v-model="budgetForm.description" id="description" class="w-full max-h-[10rem]" />
+        </div>
 
-        <label class="block">
-          <span class="text-sm">Currency</span>
-          <select
-            v-model="budget.currency_iso"
-            required
-            class="mt-1 select-default"
-          >
-            <option value="USD">USD</option>
-            <option value="EUR">EUR</option>
-            <option value="UAH">UAH</option>
-          </select>
-        </label>
+        <div>
+          <label class="block text-sm text-secondaryfg" for="currency_iso">Currency</label>
+          <Dropdown v-model="budgetForm.currency_iso" id="currency_iso" required :options="['USD', 'EUR', 'UAH']" />
+        </div>
 
-        <label class="block">
-          <span class="text-sm">Color</span>
-          <div class="flex gap-2 items-center">
+        <div>
+          <label class="block text-sm text-secondaryfg" for="color_hex">Color</label>
+
+          <div class="flex">
             <input
-              v-model="budget.color_hex"
+              v-model="budgetForm.color_hex"
+              id="color_hex"
               type="color"
-              class="mt-1 color-select-default"
+              class="mr-4 color-select-default"
+              required
             />
-            <span class="font-mono">{{ budget.color_hex }}</span>
+
+            <InputText v-model="budgetForm.color_hex" required class="w-full" />
           </div>
-        </label>
+        </div>
       </form>
 
       <div class="flex gap-2">
-        <button
-          :disabled="!formValid"
-          @click="submit"
-          class="btn-default sm:w-fit w-full flex gap-2"
-        >
-          <IconLineMdLoadingTwotoneLoop v-if="pending" />
-          {{ buttonLabel }}
-        </button>
-        <button
-          class="btn-default !bg-error sm:w-fit w-full"
-          @click="modal.close()"
-          :disabled="pending"
-        >
-          Cancel
-        </button>
+        <Button @click="submit" label="Submit" severity="success" />
+        <Button @click="close" :disable="isLoading" label="Cancel" severity="danger" />
       </div>
     </div>
-  </ModalsBaseModal>
+  </Dialog>
 </template>
 
 <script setup>
-import { ref, reactive, toRaw, computed, inject } from "vue";
-import { useAPIOfetch } from "../../composables/useAPIFetch";
+import { ref, watch, toRaw } from 'vue';
+import api from '@/plugins/api.js';
+import { useToast } from 'primevue/usetoast';
 
-const bus = inject("bus");
+const toast = useToast();
 
-const pending = ref(false);
-const modal = ref();
-const errorModal = ref(false);
-const error = ref();
+const form = ref();
+const isLoading = ref(false);
+const isError = ref();
 
 const props = defineProps({
-  budget_id: {
-    type: Number,
-  },
   budget: {
     type: Object,
+    required: false,
+  },
+  isVisible: {
+    type: Boolean,
+    required: true,
   },
 });
+const emits = defineEmits(['update:isVisible', 'update:budget', 'refresh']);
 
-/** @type {import('vue').Ref<HTMLFormElement?>} */
-const form = ref();
-
-let budget = props.budget_id
-  ? structuredClone(toRaw(props.budget))
-  : reactive({
-      name: "",
-      description: null,
-      color_hex: "#c64600",
-      currency_iso: "USD",
-    });
-
-const formValid = props.budget_id ? ref(true) : ref(false);
-function handleInput() {
-  // Check form validity each time the input event was triggered
-  formValid.value = form.value?.checkValidity();
+function close() {
+  emits('update:isVisible', false);
+  emits('update:budget', null);
+  budgetForm.value = {
+    name: '',
+    description: null,
+    color_hex: '#c64600',
+    currency_iso: 'USD',
+  };
+  form.value.reset();
 }
 
-const label = computed(() => {
-  if (props.budget_id) {
-    return "Edit budget";
-  } else {
-    return "Create budget";
-  }
+const budgetForm = ref({
+  name: '',
+  description: null,
+  color_hex: '#c64600',
+  currency_iso: 'USD',
 });
 
-const buttonLabel = computed(() => {
-  if (props.budget_id) {
-    return "Save";
-  } else {
-    return "Create";
+watch(() => props.isVisible, (value) => {
+  if (value) {
+    if (props.budget) {
+      budgetForm.value = structuredClone(toRaw(props.budget));
+    }
   }
 });
 
 async function submit() {
-  // Do not repeat a request if it is already pending
-  if (pending.value) {
+  if (isLoading.value) {
     return;
   }
 
-  const route = props.budget_id
-    ? `/api/budgets/${props.budget_id}`
-    : "/api/budgets";
-  const method = props.budget_id ? "PUT" : "POST";
+  if (!form.value?.checkValidity()) {
+    return;
+  }
 
-  pending.value = true;
-  useAPIOfetch(route, {
-    method: method,
-    body: JSON.stringify(budget),
-  })
-    .then(
-      () => {
-        bus.emit("refetch");
-        modal.value.close();
-      },
-      (err) => {
-        errorModal.value = true;
-        error.value = err;
-      }
-    )
-    .finally(() => {
-      pending.value = false;
-    });
+  isLoading.value = true;
+
+  let response;
+
+  if (props.budget) {
+    response = await api.put(`budgets/${props.budget.id}`, budgetForm.value);
+  } else {
+    response = await api.post(`budgets`, budgetForm.value);
+  }
+
+  if (response.status === 200 || response.status === 201) {
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Budget saved', life: 3000 });
+    close();
+    emits('refresh');
+  } else {
+    isError.value = response.data.message;
+  }
+
+  isLoading.value = false;
 }
 </script>

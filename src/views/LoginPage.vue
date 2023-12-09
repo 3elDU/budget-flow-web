@@ -1,36 +1,21 @@
 <template>
   <div
     class="h-screen flex justify-center items-center"
-    @keypress.enter="login"
+    @keydown.enter="login"
   >
     <div class="flex flex-col items-left mx-4 w-full max-w-[300px]">
-      <h1 class="text-lg font-semibold">Login</h1>
-      <form ref="form">
-        <div class="mt-2">
-          <label class="block mb-1 text-sm text-secondaryfg" for="email"
-            >E-mail</label
-          >
-          <input
-            class="w-full input-default"
-            v-model="email"
-            name="email"
-            type="email"
-            required
-          />
-        </div>
+      <h1 class="text-lg font-semibold mb-6">Login</h1>
 
-        <div class="mt-6">
-          <label class="block mb-1 text-sm text-secondaryfg" for="password"
-            >Password</label
-          >
-          <input
-            class="w-full input-default"
-            v-model="password"
-            name="password"
-            type="password"
-            required
-          />
-        </div>
+      <form ref="form" class="flex flex-col gap-6">
+        <span class="p-float-label">
+            <InputText v-model="email" id="email" required />
+            <label class="text-sm text-secondaryfg" for="email">E-mail</label>
+        </span>
+
+        <span class="p-float-label">
+            <InputText v-model="password" id="password" required type="password" />
+            <label class="text-sm text-secondaryfg" for="password">Password</label>
+        </span>
 
         <ul v-if="errors.length > 0" class="mt-3 ml-4 list-disc">
           <li v-for="(error, i) in errors" :key="i" class="text-error">
@@ -38,81 +23,64 @@
           </li>
         </ul>
 
-        <div class="mt-6 text-right">
-          <button
-            type="button"
-            @click="login"
-            class="btn-small px-5 py-1.5 flex gap-2 justify-center items-center"
-          >
-            <IconLineMdLoadingTwotoneLoop v-if="loading" />
-            Login
-          </button>
-        </div>
+        <Button label="Login" type="button" @click="login" :loading="isLoading" />
       </form>
     </div>
   </div>
 </template>
 
 <script setup>
-import useIsAuthenticated from "../composables/useIsAuthenticated";
-import useAuthToken from "../composables/useAuthToken";
-import { useRouter } from "vue-router";
-import { ref } from "vue";
+import { useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { useUserStore } from '@/stores/userStore.js';
+import api from "@/plugins/api.js";
 
 const router = useRouter();
-const { setAuthToken } = useAuthToken();
-const { isAuthenticated, setIsAuthenticated } = useIsAuthenticated();
+const userStore = useUserStore();
 
 // If the user is already authenticated, redirect to dashboard
-if (isAuthenticated.value === true) {
-  router.push("dashboard");
+if (userStore.isAuthenticated === true) {
+  router.push('dashboard');
 }
 
 const form = ref(null);
-const email = ref("");
-const password = ref("");
+const email = ref('');
+const password = ref('');
 const errors = ref([]);
-const loading = ref(false);
+const isLoading = ref(false);
 
 async function login() {
   if (!form.value.reportValidity()) {
     return;
   }
 
-  loading.value = true;
-  const response = await fetch(
-    import.meta.env.VITE_API_ROOT + "/api/auth/login",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-      },
-      body: JSON.stringify({
-        email: email.value,
-        password: password.value,
-      }),
-    }
-  );
-  loading.value = false;
+  isLoading.value = true;
 
-  const body = await response.json();
+  const response = await api.post('auth/login', {
+    email: email.value,
+    password: password.value,
+  });
 
-  if (!response.ok) {
+  isLoading.value = false;
+
     if (response.status === 401) {
       // HTTP 401 Unauthorized
-      errors.value = ["Invalid password"];
-    } else if (Object.hasOwn(body, "errors")) {
-      errors.value = [];
-      Object.values(body.errors).map((field) =>
-        Object.values(field).map((error) => errors.value.push(error))
-      );
-    }
-  } else {
-    setAuthToken(body.token);
-    setIsAuthenticated(true);
+      errors.value = ['Invalid password'];
 
-    await router.push("dashboard");
-  }
+      return;
+    } else if (response.status !== 200) {
+      // Other HTTP status code
+      errors.value = ['An error occurred. Please try again later.'];
+
+      return;
+    }
+
+    const { token } = response.data;
+
+    userStore.token = token;
+
+    await userStore.fetchMe();
+
+    await router.push('dashboard');
 }
 </script>

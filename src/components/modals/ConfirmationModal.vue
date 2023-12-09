@@ -1,46 +1,47 @@
 <template>
-  <ModalsBaseModal persistent ref="modal">
+  <Dialog v-model:visible="isVisible" modal header="Delete item">
     <div class="flex flex-col gap-6">
-      <p class="font-bold">{{ intent }}</p>
+      <p>{{ text }}</p>
 
       <div class="flex gap-2 self-end">
-        <button @click="resolve(true)" class="btn-default !bg-error">
-          {{ confirmation }}
-        </button>
-        <button @click="resolve(false)" class="btn-default">No</button>
+        <Button @click="resolve(true)" severity="danger" :label="confirmation" />
+        <Button @click="resolve(false)" label="No" />
       </div>
     </div>
-  </ModalsBaseModal>
+  </Dialog>
 </template>
 
 <script setup>
-import { ref } from "vue";
+import { ref } from 'vue';
 
-const { intent, confirmation } = defineProps({
-  intent: {
+defineProps({
+  text: {
     type: String,
-    required: true,
+    default: 'Are you sure you want to delete this item?',
   },
   confirmation: {
     type: String,
-    default: "Yes",
+    default: 'Yes',
   },
 });
 
-const modal = ref();
+const isVisible = ref(false);
 
 /** @type {(value) => void} */
 let resolveFn = undefined;
+
 function resolve(value) {
   resolveFn(value);
-  modal.value.close();
+  isVisible.value = false;
 }
 
-function ask() {
+function confirm() {
+  isVisible.value = true;
+
   return new Promise((resolve) => {
     resolveFn = resolve;
   });
 }
 
-defineExpose({ ask });
+defineExpose({ confirm });
 </script>
