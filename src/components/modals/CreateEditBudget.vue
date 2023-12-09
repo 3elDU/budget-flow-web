@@ -1,54 +1,3 @@
-<template>
-  <Dialog
-    v-bind:visible="isVisible"
-    modal
-    :header="props.budget ? 'Edit budget' : 'Create budget'"
-    :pt="{ mask: { style: 'backdrop-filter: blur(2px)' } }"
-    :style="{ width: '400px' }"
-    @update:visible="close"
-  >
-    <div class="flex flex-col gap-8">
-      <form ref="form" class="flex flex-col gap-4">
-        <div>
-          <label class="block text-sm text-secondaryfg" for="name">Name</label>
-          <InputText v-model="budgetForm.name" id="name" required class="w-full" />
-        </div>
-
-        <div>
-          <label class="block text-sm text-secondaryfg" for="description">Description (optional)</label>
-          <Textarea v-model="budgetForm.description" id="description" class="w-full max-h-[10rem]" />
-        </div>
-
-        <div>
-          <label class="block text-sm text-secondaryfg" for="currency_iso">Currency</label>
-          <Dropdown v-model="budgetForm.currency_iso" id="currency_iso" required :options="['USD', 'EUR', 'UAH']" />
-        </div>
-
-        <div>
-          <label class="block text-sm text-secondaryfg" for="color_hex">Color</label>
-
-          <div class="flex">
-            <input
-              v-model="budgetForm.color_hex"
-              id="color_hex"
-              type="color"
-              class="mr-4 color-select-default"
-              required
-            />
-
-            <InputText v-model="budgetForm.color_hex" required class="w-full" />
-          </div>
-        </div>
-      </form>
-
-      <div class="flex gap-2">
-        <Button @click="submit" label="Submit" severity="success" />
-        <Button @click="close" :disable="isLoading" label="Cancel" severity="danger" />
-      </div>
-    </div>
-  </Dialog>
-</template>
-
 <script setup>
 import { ref, watch, toRaw } from 'vue';
 import api from '@/plugins/api.js';
@@ -129,3 +78,54 @@ async function submit() {
   isLoading.value = false;
 }
 </script>
+
+<template>
+  <Dialog
+    v-bind:visible="isVisible"
+    modal
+    :header="props.budget ? 'Edit budget' : 'Create budget'"
+    :pt="{ mask: { style: 'backdrop-filter: blur(2px)' } }"
+    :style="{ width: '400px' }"
+    @update:visible="close"
+  >
+    <div class="flex flex-col gap-8">
+      <form ref="form" class="flex flex-col gap-4">
+        <div>
+          <label class="block text-sm text-secondaryfg" for="name">Name</label>
+          <InputText v-model="budgetForm.name" id="name" required class="w-full" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-secondaryfg" for="description">Description (optional)</label>
+          <Textarea v-model="budgetForm.description" id="description" class="w-full max-h-[10rem]" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-secondaryfg" for="currency_iso">Currency</label>
+          <Dropdown v-model="budgetForm.currency_iso" id="currency_iso" required :options="['USD', 'EUR', 'UAH']" />
+        </div>
+
+        <div>
+          <label class="block text-sm text-secondaryfg" for="color_hex">Color</label>
+
+          <div class="flex">
+            <input
+              v-model="budgetForm.color_hex"
+              id="color_hex"
+              type="color"
+              class="mr-4 color-select-default"
+              required
+            />
+
+            <InputText v-model="budgetForm.color_hex" required class="w-full" />
+          </div>
+        </div>
+      </form>
+
+      <div class="flex gap-2">
+        <Button @click="submit" label="Submit" severity="success" />
+        <Button @click="close" :disable="isLoading" label="Cancel" severity="danger" />
+      </div>
+    </div>
+  </Dialog>
+</template>

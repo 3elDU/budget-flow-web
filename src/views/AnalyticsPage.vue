@@ -1,63 +1,3 @@
-<template>
-  <div class="p-4 flex flex-col gap-6">
-    <div class="flex flex-col sm:flex-row flex-wrap gap-4">
-      <div class="flex gap-4">
-        <div class="w-full sm:w-fit">
-          <label class="text-sm mr-2" for="startDate">Start date</label>
-
-          <Calendar v-model="startTime" @update:model-value="refreshData()" id="startDate" />
-        </div>
-
-        <div class="w-full sm:w-fit">
-          <label class="text-sm mr-2" for="endDate">End date</label>
-
-          <Calendar v-model="endTime" @update:model-value="refreshData()" id="endDate" />
-        </div>
-      </div>
-
-      <div>
-        <label class="text-sm mr-2" for="period">Period</label>
-        <Dropdown
-          :options="periods"
-          v-model="period"
-          @change="refreshData()"
-          id="period"
-          option-label="label"
-          option-value="value"
-        />
-      </div>
-    </div>
-
-    <div v-if="isError">
-      <p class="text-xl font-bold">No analytics available</p>
-    </div>
-
-    <div class="flex flex-row flex-wrap gap-4 justify-center">
-      <LineChart
-        :loading="isLoading"
-        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
-        :data="chartData.income"
-        label="Income"
-        class="w-full max-w-2xl"
-      />
-      <LineChart
-        :loading="isLoading"
-        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
-        :data="chartData.expense"
-        label="Expense"
-        class="w-full max-w-2xl"
-      />
-      <LineChart
-        :loading="isLoading"
-        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
-        :data="chartData.balance"
-        label="Balance"
-        class="w-full max-w-2xl"
-      />
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { ref, computed } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
@@ -170,3 +110,63 @@ const chartData = computed(() => {
   };
 });
 </script>
+
+<template>
+  <div class="p-4 flex flex-col gap-6">
+    <div class="flex flex-col sm:flex-row flex-wrap gap-4">
+      <div class="flex gap-4">
+        <div class="w-full sm:w-fit">
+          <label class="text-sm mr-2" for="startDate">Start date</label>
+
+          <Calendar v-model="startTime" @update:model-value="refreshData()" id="startDate" />
+        </div>
+
+        <div class="w-full sm:w-fit">
+          <label class="text-sm mr-2" for="endDate">End date</label>
+
+          <Calendar v-model="endTime" @update:model-value="refreshData()" id="endDate" />
+        </div>
+      </div>
+
+      <div>
+        <label class="text-sm mr-2" for="period">Period</label>
+        <Dropdown
+          :options="periods"
+          v-model="period"
+          @change="refreshData()"
+          id="period"
+          option-label="label"
+          option-value="value"
+        />
+      </div>
+    </div>
+
+    <div v-if="isError">
+      <p class="text-xl font-bold">No analytics available</p>
+    </div>
+
+    <div class="flex flex-row flex-wrap gap-4 justify-center">
+      <LineChart
+        :loading="isLoading"
+        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
+        :data="chartData.income"
+        label="Income"
+        class="w-full max-w-2xl"
+      />
+      <LineChart
+        :loading="isLoading"
+        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
+        :data="chartData.expense"
+        label="Expense"
+        class="w-full max-w-2xl"
+      />
+      <LineChart
+        :loading="isLoading"
+        :currency="user.settings?.preferred_currency_iso ?? 'USD'"
+        :data="chartData.balance"
+        label="Balance"
+        class="w-full max-w-2xl"
+      />
+    </div>
+  </div>
+</template>

@@ -1,34 +1,3 @@
-<template>
-  <div
-    class="h-screen flex justify-center items-center"
-    @keydown.enter="login"
-  >
-    <div class="flex flex-col items-left mx-4 w-full max-w-[300px]">
-      <h1 class="text-lg font-semibold mb-6">Login</h1>
-
-      <form ref="form" class="flex flex-col gap-6">
-        <span class="p-float-label">
-            <InputText v-model="email" id="email" required />
-            <label class="text-sm text-secondaryfg" for="email">E-mail</label>
-        </span>
-
-        <span class="p-float-label">
-            <InputText v-model="password" id="password" required type="password" />
-            <label class="text-sm text-secondaryfg" for="password">Password</label>
-        </span>
-
-        <ul v-if="errors.length > 0" class="mt-3 ml-4 list-disc">
-          <li v-for="(error, i) in errors" :key="i" class="text-error">
-            {{ error }}
-          </li>
-        </ul>
-
-        <Button label="Login" type="button" @click="login" :loading="isLoading" />
-      </form>
-    </div>
-  </div>
-</template>
-
 <script setup>
 import { useRouter } from 'vue-router';
 import { ref } from 'vue';
@@ -63,24 +32,55 @@ async function login() {
 
   isLoading.value = false;
 
-    if (response.status === 401) {
-      // HTTP 401 Unauthorized
-      errors.value = ['Invalid password'];
+  if (response.status === 401) {
+    // HTTP 401 Unauthorized
+    errors.value = ['Invalid password'];
 
-      return;
-    } else if (response.status !== 200) {
-      // Other HTTP status code
-      errors.value = ['An error occurred. Please try again later.'];
+    return;
+  } else if (response.status !== 200) {
+    // Other HTTP status code
+    errors.value = ['An error occurred. Please try again later.'];
 
-      return;
-    }
+    return;
+  }
 
-    const { token } = response.data;
+  const { token } = response.data;
 
-    userStore.token = token;
+  userStore.token = token;
 
-    await userStore.fetchMe();
+  await userStore.fetchMe();
 
-    await router.push('dashboard');
+  await router.push('dashboard');
 }
 </script>
+
+<template>
+  <div
+    class="h-screen flex justify-center items-center"
+    @keydown.enter="login"
+  >
+    <div class="flex flex-col items-left mx-4 w-full max-w-[300px]">
+      <h1 class="text-lg font-semibold mb-6">Login</h1>
+
+      <form ref="form" class="flex flex-col gap-6">
+        <span class="p-float-label">
+            <InputText v-model="email" id="email" required />
+            <label class="text-sm text-secondaryfg" for="email">E-mail</label>
+        </span>
+
+        <span class="p-float-label">
+            <InputText v-model="password" id="password" required type="password" />
+            <label class="text-sm text-secondaryfg" for="password">Password</label>
+        </span>
+
+        <ul v-if="errors.length > 0" class="mt-3 ml-4 list-disc">
+          <li v-for="(error, i) in errors" :key="i" class="text-error">
+            {{ error }}
+          </li>
+        </ul>
+
+        <Button label="Login" type="button" @click="login" :loading="isLoading" />
+      </form>
+    </div>
+  </div>
+</template>

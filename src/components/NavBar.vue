@@ -1,3 +1,32 @@
+<script setup>
+import { useMediaQuery, useThrottleFn } from '@vueuse/core';
+import { ref } from 'vue';
+import { RouterLink } from 'vue-router';
+import { useUserStore } from '@/stores/userStore.js';
+import router from "@/plugins/router.js";
+
+const userStore = useUserStore();
+const user = userStore.user;
+
+if (!user) {
+  userStore.fetchMe();
+}
+
+const links = [
+  { name: 'Dashboard', to: '/dashboard' },
+  { name: 'Analytics', to: '/analytics' },
+  { name: 'Operations', to: '/operations' },
+  { name: 'Settings', to: '/profile' },
+];
+
+const largeScreen = useMediaQuery("(min-width: 1280px)");
+const isSidebarOpen = ref(false);
+
+const toggleSidebar = useThrottleFn(() => {
+  isSidebarOpen.value = !isSidebarOpen.value;
+}, 350);
+</script>
+
 <template>
   <nav
     v-if="largeScreen"
@@ -67,59 +96,6 @@
     </Transition>
   </div>
 </template>
-
-<script setup>
-import { useMediaQuery, useThrottleFn } from '@vueuse/core';
-import { ref } from 'vue';
-import { RouterLink } from 'vue-router';
-import { useUserStore } from '@/stores/userStore.js';
-import router from "@/plugins/router.js";
-
-const userStore = useUserStore();
-const user = userStore.user;
-
-if (!user) {
-  userStore.fetchMe();
-}
-
-const links = [
-  { name: 'Dashboard', to: '/dashboard' },
-  { name: 'Analytics', to: '/analytics' },
-  { name: 'Operations', to: '/operations' },
-  { name: 'Settings', to: '/profile' },
-];
-
-const items = ref([
-  {
-    label: 'Router',
-    icon: 'pi pi-palette',
-    items: [
-      {
-        label: 'Styled',
-        route: '/theming'
-      },
-      {
-        label: 'Unstyled',
-        route: '/unstyled'
-      }
-    ]
-  },
-  {
-    label: 'Programmatic',
-    icon: 'pi pi-link',
-    command: () => {
-      router.push('/installation');
-    }
-  },
-]);
-
-const largeScreen = useMediaQuery("(min-width: 1280px)");
-const isSidebarOpen = ref(false);
-
-const toggleSidebar = useThrottleFn(() => {
-  isSidebarOpen.value = !isSidebarOpen.value;
-}, 350);
-</script>
 
 <style scoped>
 .sidebar-enter-active,

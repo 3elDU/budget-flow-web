@@ -1,16 +1,3 @@
-<template>
-  <Dialog v-model:visible="isVisible" modal header="Delete item">
-    <div class="flex flex-col gap-6">
-      <p>{{ text }}</p>
-
-      <div class="flex gap-2 self-end">
-        <Button @click="resolve(true)" severity="danger" :label="confirmation" />
-        <Button @click="resolve(false)" label="No" />
-      </div>
-    </div>
-  </Dialog>
-</template>
-
 <script setup>
 import { ref } from 'vue';
 
@@ -45,3 +32,16 @@ function confirm() {
 
 defineExpose({ confirm });
 </script>
+
+<template>
+  <Dialog v-model:visible="isVisible" modal header="Delete item">
+    <div class="flex flex-col gap-6">
+      <p>{{ text }}</p>
+
+      <div class="flex gap-2 self-end">
+        <Button @click="resolve(true)" severity="danger" :label="confirmation" />
+        <Button @click="resolve(false)" label="No" />
+      </div>
+    </div>
+  </Dialog>
+</template>

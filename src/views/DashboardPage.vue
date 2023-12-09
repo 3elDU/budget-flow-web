@@ -1,3 +1,39 @@
+<script setup>
+import { ref } from 'vue';
+import { useThrottleFn } from '@vueuse/core';
+import api from '@/plugins/api.js';
+
+const budgets = ref(null);
+const isLoading = ref(false);
+const error = ref(null);
+
+async function fetchBudgets() {
+  isLoading.value = true;
+
+  const response = await api.get('budgets');
+
+  if (response.status === 200) {
+    budgets.value = response.data;
+  } else {
+    error.value = response.data.message;
+  }
+
+  isLoading.value = false;
+}
+
+fetchBudgets();
+
+const retryFetch = useThrottleFn(fetchBudgets, 1000);
+
+const isVisibleBudgetModal = ref(false);
+const budget = ref(null);
+
+function editBudget(item) {
+  budget.value = item;
+  isVisibleBudgetModal.value = true;
+}
+</script>
+
 <template>
   <div class="p-4 h-full">
     <Transition mode="out-in">
@@ -40,39 +76,3 @@
     />
   </div>
 </template>
-
-<script setup>
-import { ref } from 'vue';
-import { useThrottleFn } from '@vueuse/core';
-import api from '@/plugins/api.js';
-
-const budgets = ref(null);
-const isLoading = ref(false);
-const error = ref(null);
-
-async function fetchBudgets() {
-  isLoading.value = true;
-
-  const response = await api.get('budgets');
-
-  if (response.status === 200) {
-    budgets.value = response.data;
-  } else {
-    error.value = response.data.message;
-  }
-
-  isLoading.value = false;
-}
-
-fetchBudgets();
-
-const retryFetch = useThrottleFn(fetchBudgets, 1000);
-
-const isVisibleBudgetModal = ref(false);
-const budget = ref(null);
-
-function editBudget(item) {
-  budget.value = item;
-  isVisibleBudgetModal.value = true;
-}
-</script>
