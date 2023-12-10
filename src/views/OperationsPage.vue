@@ -75,6 +75,12 @@ async function deleteOperation(item) {
   const response = await api.delete(`operations/${item.id}`);
 
   if (response.status === 204) {
+    toast.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Operation deleted',
+      life: 3000,
+    });
     await fetchOperations();
   } else {
     toast.add({

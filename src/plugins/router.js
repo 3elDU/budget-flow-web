@@ -1,12 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
-import IndexPage from "../views/IndexPage.vue";
-import LoginPage from "../views/LoginPage.vue";
-import DashboardPage from "../views/DashboardPage.vue";
-import AnalyticsPage from "../views/AnalyticsPage.vue";
-import ProfilePage from "../views/ProfilePage.vue";
-import {useUserStore} from "@/stores/userStore.js";
-import NotFoundPage from "@/views/NotFoundPage.vue";
-import OperationsPage from "@/views/OperationsPage.vue";
+import { useUserStore } from "@/stores/userStore.js";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,43 +7,49 @@ const router = createRouter({
     {
       path: '/',
       name: 'index',
-      component: IndexPage,
+      component: () => import('../views/IndexPage.vue'),
       meta: { title: 'Home', requiresAuth: true },
     },
     {
       path: '/login',
       name: 'login',
-      component: LoginPage,
+      component: () => import('../views/LoginPage.vue'),
       meta: { title: 'Login' },
     },
     {
       path: "/dashboard",
       name: "dashboard",
-      component: DashboardPage,
+      component: () => import('../views/DashboardPage.vue'),
       meta: { title: 'Dashboard', requiresAuth: true },
     },
     {
       path: '/analytics',
       name: 'analytics',
-      component: AnalyticsPage,
+      component: () => import('../views/AnalyticsPage.vue'),
       meta: { title: 'Analytics', requiresAuth: true },
     },
     {
       path: '/profile',
       name: 'profile',
-      component: ProfilePage,
+      component: () => import('../views/ProfilePage.vue'),
       meta: { title: 'Profile', requiresAuth: true },
     },
     {
       path: '/operations',
       name: 'operations',
-      component: OperationsPage,
+      component: () => import('../views/OperationsPage.vue'),
       meta: { title: 'Operations', requiresAuth: true },
+    },
+    {
+      path: '/categories',
+      name: 'categories',
+      component: () => import('../views/CategoriesPage.vue'),
+      meta: { title: 'Categories', requiresAuth: true },
     },
     {
       path: '/:catchAll(.*)',
       name: 'notFound',
-      component: NotFoundPage,
+      component: () => import('../views/NotFoundPage.vue'),
       meta: { title: 'Page not found' },
     },
   ],

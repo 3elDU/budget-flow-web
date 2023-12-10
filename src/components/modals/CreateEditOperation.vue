@@ -25,12 +25,6 @@ const props = defineProps({
 });
 const emits = defineEmits(['update:isVisible', 'update:budget', 'refresh']);
 
-const budgetId = ref(null);
-
-if (props.budget) {
-  budgetId.value = props.budget.id;
-}
-
 const budgets = ref([]);
 
 async function fetchBudgets() {
@@ -119,7 +113,7 @@ async function submit() {
   }
 
   if (response.status === 200 || response.status === 201) {
-    toast.add({ severity: 'success', summary: 'Success', detail: 'Budget saved', life: 3000 });
+    toast.add({ severity: 'success', summary: 'Success', detail: 'Operation saved', life: 3000 });
     close();
     emits('refresh');
   } else {

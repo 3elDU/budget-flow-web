@@ -16,6 +16,7 @@ const links = [
   { name: 'Dashboard', to: '/dashboard' },
   { name: 'Analytics', to: '/analytics' },
   { name: 'Operations', to: '/operations' },
+  { name: 'Categories', to: '/categories' },
   { name: 'Settings', to: '/profile' },
 ];
 
