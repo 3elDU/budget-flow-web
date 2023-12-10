@@ -3,6 +3,7 @@ import { ref, computed } from 'vue';
 import { useDebounceFn } from '@vueuse/core';
 import { useUserStore } from '@/stores/userStore.js';
 import api from '@/plugins/api.js';
+import { format } from 'date-fns';
 
 const userStore = useUserStore();
 
@@ -28,13 +29,17 @@ const data = ref([]);
 async function fetchAnalytics() {
   isLoading.value = true;
 
-  const response = await api.get('analytics', {
-    params: {
-      period: period.value,
-      start_time: startTime.value,
-      end_time: endTime.value,
-    },
-  });
+  const params = { period: period.value };
+
+  if (startTime.value) {
+    params.start_time = format(startTime.value, 'yyyy-MM-dd 00:00:00');
+  }
+
+  if (endTime.value) {
+    params.end_time = format(endTime.value, 'yyyy-MM-dd 23:59:59');
+  }
+
+  const response = await api.get('analytics', { params });
 
   if (response.status === 200) {
     data.value = response.data;
