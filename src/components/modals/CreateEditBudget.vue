@@ -7,7 +7,6 @@ const toast = useToast();
 
 const form = ref();
 const isLoading = ref(false);
-const isError = ref();
 
 const props = defineProps({
   budget: {
@@ -71,7 +70,12 @@ async function submit() {
     close();
     emits('refresh');
   } else {
-    isError.value = response.data.message;
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: response.data.message ?? 'Failed to save budget',
+      life: 3000,
+    });
   }
 
   isLoading.value = false;

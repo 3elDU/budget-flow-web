@@ -104,7 +104,12 @@ async function fetchBudgets() {
   if (response.status === 200) {
     budgets.value = response.data;
   } else {
-    isError.value = true;
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: 'Failed to load budgets',
+      life: 3000,
+    });
   }
 
   isLoading.value = false;
