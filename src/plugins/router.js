@@ -5,6 +5,8 @@ import DashboardPage from "../views/DashboardPage.vue";
 import AnalyticsPage from "../views/AnalyticsPage.vue";
 import ProfilePage from "../views/ProfilePage.vue";
 import {useUserStore} from "@/stores/userStore.js";
+import NotFoundPage from "@/views/NotFoundPage.vue";
+import OperationsPage from "@/views/OperationsPage.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -38,6 +40,18 @@ const router = createRouter({
       name: 'profile',
       component: ProfilePage,
       meta: { title: 'Profile', requiresAuth: true },
+    },
+    {
+      path: '/operations',
+      name: 'operations',
+      component: OperationsPage,
+      meta: { title: 'Operations', requiresAuth: true },
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'notFound',
+      component: NotFoundPage,
+      meta: { title: 'Page not found' },
     },
   ],
 });

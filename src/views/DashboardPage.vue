@@ -5,7 +5,7 @@ import api from '@/plugins/api.js';
 
 const budgets = ref(null);
 const isLoading = ref(false);
-const error = ref(null);
+const isError = ref(null);
 
 async function fetchBudgets() {
   isLoading.value = true;
@@ -15,7 +15,7 @@ async function fetchBudgets() {
   if (response.status === 200) {
     budgets.value = response.data;
   } else {
-    error.value = response.data.message;
+    isError.value = true;
   }
 
   isLoading.value = false;
@@ -37,7 +37,7 @@ function editBudget(item) {
 <template>
   <div class="p-4 h-full">
     <Transition mode="out-in">
-      <div v-if="error !== null" class="grow flex flex-col gap-4 justify-center items-center">
+      <div v-if="isError !== null" class="grow flex flex-col gap-4 justify-center items-center">
         <p class="text-3xl font-bold">Failed to load budgets</p>
 
         <Button label="Retry" @click="retryFetch" />
