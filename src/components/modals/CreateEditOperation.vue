@@ -69,7 +69,7 @@ function close() {
     name: '',
     description: null,
     categories: [],
-    created_at: null,
+    made_at: null,
     amount: null,
   };
 }
@@ -79,7 +79,7 @@ const operationForm = ref({
   name: '',
   description: null,
   categories: [],
-  created_at: null,
+  made_at: null,
   amount: null,
 });
 
@@ -88,7 +88,7 @@ watch(() => props.isVisible, (value) => {
     if (props.operation) {
       operationForm.value = structuredClone(toRaw(props.operation));
       operationForm.value.categories = operationForm.value.categories.map((category) => category.id);
-      operationForm.value.created_at = new Date(operationForm.value.created_at);
+      operationForm.value.made_at = new Date(operationForm.value.made_at);
     }
   }
 });
@@ -177,11 +177,11 @@ async function submit() {
         </div>
 
         <div>
-          <label class="block text-sm text-secondaryfg" for="created_at">Created at</label>
+          <label class="block text-sm text-secondaryfg" for="made_at">Made at</label>
           <Calendar
             class="w-full"
-            v-model="operationForm.created_at"
-            id="created_at"
+            v-model="operationForm.made_at"
+            id="made_at"
             required
             show-time
           />

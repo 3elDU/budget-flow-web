@@ -140,9 +140,15 @@ function getCurrency(item) {
           </template>
         </Column>
 
-        <Column field="created_at" header="Date">
+        <Column field="created_at" header="Created at">
           <template #body="slotProps">
             {{ new Date(slotProps.data.created_at).toLocaleDateString() }}
+          </template>
+        </Column>
+
+        <Column field="made_at" header="Made at">
+          <template #body="slotProps">
+            {{ new Date(slotProps.data.made_at).toLocaleDateString() }}
           </template>
         </Column>
 
