@@ -93,6 +93,30 @@ async function deleteOperation(item) {
 
   isLoading.value = false;
 }
+
+const budgets = ref([]);
+
+async function fetchBudgets() {
+  isLoading.value = true;
+
+  const response = await api.get('budgets');
+
+  if (response.status === 200) {
+    budgets.value = response.data;
+  } else {
+    isError.value = true;
+  }
+
+  isLoading.value = false;
+}
+
+fetchBudgets();
+
+function getCurrency(item) {
+  const budget = budgets.value.find((budget) => budget.id === item.budget_id);
+
+  return budget?.currency_iso ?? 'USD';
+}
 </script>
 
 <template>
@@ -124,7 +148,7 @@ async function deleteOperation(item) {
 
         <Column field="amount" header="Amount">
           <template #body="slotProps">
-            {{ slotProps.data.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) }}
+            {{ slotProps.data.amount.toLocaleString('en-US', { style: 'currency', currency: getCurrency(slotProps.data) }) }}
           </template>
         </Column>
 
