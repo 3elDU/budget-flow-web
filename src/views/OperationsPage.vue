@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import api from '@/plugins/api.js';
 import { useToast } from 'primevue/usetoast';
 import Paginator from 'primevue/paginator';
+import CreateEditOperation from "@/components/modals/CreateEditOperation.vue";
 
 const toast = useToast();
 
@@ -49,10 +50,47 @@ function changePage({ page }) {
 }
 
 const filterTypes = ['=', '!=', '>', '<', '>=', '<=', 'like', 'not like'];
+
+const isVisibleOperationModal = ref(false);
+const operation = ref(null);
+
+function editOperation(item) {
+  operation.value = item;
+  isVisibleOperationModal.value = true;
+}
+
+const modal = ref();
+
+async function deleteOperation(item) {
+  if (isLoading.value) {
+    return;
+  }
+
+  if (!await modal.value.confirm()) {
+    return;
+  }
+
+  isLoading.value = true;
+
+  const response = await api.delete(`operations/${item.id}`);
+
+  if (response.status === 204) {
+    await fetchOperations();
+  } else {
+    toast.add({
+      severity: 'error',
+      summary: 'Error',
+      detail: response.data.message ?? 'Failed to delete operation',
+      life: 3000,
+    });
+  }
+
+  isLoading.value = false;
+}
 </script>
 
 <template>
-  <div class="flex justify-center gap-4 p-4">
+  <div class="flex justify-center gap-4 p-4 overflow-hidden">
     <div>
       <DataTable
         :value="operations"
@@ -65,23 +103,38 @@ const filterTypes = ['=', '!=', '>', '<', '>=', '<=', 'like', 'not like'];
         scrollable
       >
         <Column field="name" header="Name" />
-        <Column field="description" header="Description" style="max-width: 10%" />
+        <Column field="description" header="Description" style="max-width: 10%;  overflow-x: auto" />
         <Column field="categories" header="Categories" style="max-width: 25%">
           <template #body="slotProps">
             <Tag v-for="category in slotProps.data.categories" :value="category.name" rounded class="m-0.5" :style="`background: ${category.color_hex}`" />
           </template>
         </Column>
+
         <Column field="created_at" header="Date">
           <template #body="slotProps">
             {{ new Date(slotProps.data.created_at).toLocaleDateString() }}
           </template>
         </Column>
+
         <Column field="amount" header="Amount">
           <template #body="slotProps">
             {{ slotProps.data.amount.toLocaleString('en-US', { style: 'currency', currency: 'USD' }) }}
           </template>
         </Column>
 
+        <Column>
+          <template #body="slotProps">
+            <div class="flex gap-2">
+              <Button @click="editOperation(slotProps.data)" class="p-2">
+                <IconMdiEdit font-size="24" />
+              </Button>
+
+              <Button severity="danger" @click="deleteOperation(slotProps.data)" class="p-2">
+                <IconMdiDelete font-size="24" />
+              </Button>
+            </div>
+          </template>
+        </Column>
       </DataTable>
 
       <Paginator
@@ -91,39 +144,43 @@ const filterTypes = ['=', '!=', '>', '<', '>=', '<=', 'like', 'not like'];
         :currentPage="meta.current_page"
         :rowsPerPageOptions="[10, 20, 30]"
         @page="changePage"
-      />
+      >
+        <template #start>
+          <Button label="Create" @click="isVisibleOperationModal = true" />
+        </template>
+      </Paginator>
     </div>
 
     <Panel header="Filters">
       <div class="flex flex-col gap-4 w-64">
         <div>
-          <label for="name">Name</label>
-          <InputText id="name" />
+          <label for="filterName">Name</label>
+          <InputText id="filterName" />
         </div>
 
         <div>
-          <label for="description">Description</label>
-          <InputText id="description" />
+          <label for="filterDescription">Description</label>
+          <InputText id="filterDescription" />
         </div>
 
         <div>
-          <label for="category">Category</label>
-          <Dropdown id="category" class="w-full" />
+          <label for="filterCategories">Category</label>
+          <MultiSelect id="filterCategories" class="w-full" />
         </div>
 
         <div>
-          <label for="date">Date</label>
+          <label for="filterDate">Date</label>
           <div class="flex gap-2">
             <Dropdown :options="filterTypes" />
-            <Calendar id="date" />
+            <Calendar id="filterDate" />
           </div>
         </div>
 
         <div>
-          <label for="amount">Amount</label>
+          <label for="filterAmount">Amount</label>
           <div class="flex gap-2">
             <Dropdown :options="filterTypes" />
-            <InputNumber id="amount" :max-fraction-digits="2" inputStyle="width: 1%" />
+            <InputNumber id="filterAmount" :max-fraction-digits="2" locale="en-US" inputStyle="width: 1%" />
           </div>
         </div>
 
@@ -131,5 +188,13 @@ const filterTypes = ['=', '!=', '>', '<', '>=', '<=', 'like', 'not like'];
         <Button label="Reset" severity="secondary" />
       </div>
     </Panel>
+
+    <CreateEditOperation
+      v-model:is-visible="isVisibleOperationModal"
+      v-model:operation="operation"
+      @refresh="fetchOperations"
+    />
+
+    <ModalsConfirmationModal ref="modal" />
   </div>
 </template>

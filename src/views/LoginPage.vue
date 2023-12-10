@@ -64,12 +64,12 @@ async function login() {
 
       <form ref="form" class="flex flex-col gap-6">
         <span class="p-float-label">
-            <InputText v-model="email" id="email" required />
+            <InputText v-model="email" id="email" required class="w-full" />
             <label class="text-sm text-secondaryfg" for="email">E-mail</label>
         </span>
 
         <span class="p-float-label">
-            <InputText v-model="password" id="password" required type="password" />
+            <InputText v-model="password" id="password" required type="password" class="w-full" />
             <label class="text-sm text-secondaryfg" for="password">Password</label>
         </span>
 

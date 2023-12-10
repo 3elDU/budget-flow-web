@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import api from "@/plugins/api.js";
+import router from "@/plugins/router.js";
 
 // eslint-disable-next-line import/prefer-default-export
 export const useUserStore = defineStore('userStore', {
@@ -19,6 +20,8 @@ export const useUserStore = defineStore('userStore', {
     logout() {
       this.token = null;
       this.user = null;
+
+      router.push({ name: 'login' });
     },
   },
   persist: {

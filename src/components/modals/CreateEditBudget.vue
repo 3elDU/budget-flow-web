@@ -30,7 +30,6 @@ function close() {
     color_hex: '#c64600',
     currency_iso: 'USD',
   };
-  form.value.reset();
 }
 
 const budgetForm = ref({
@@ -123,8 +122,19 @@ async function submit() {
       </form>
 
       <div class="flex gap-2">
-        <Button @click="submit" label="Submit" severity="success" />
-        <Button @click="close" :disable="isLoading" label="Cancel" severity="danger" />
+        <Button
+          @click="submit"
+          :loading="isLoading"
+          label="Submit"
+          severity="success"
+        />
+
+        <Button
+          @click="close"
+          :loading="isLoading"
+          label="Cancel"
+          severity="danger"
+        />
       </div>
     </div>
   </Dialog>

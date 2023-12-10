@@ -53,7 +53,7 @@ const toggleSidebar = useThrottleFn(() => {
     </div>
 
     <div class="ml-auto flex flex-row pr-6 gap-12 items-center">
-      <div>{{ user.name }}</div>
+      <div>{{ user?.name }}</div>
 
       <Button link @click="userStore.logout" class="px-4 py-2 rounded-lg text-white font-bold">
         Log out
@@ -76,7 +76,7 @@ const toggleSidebar = useThrottleFn(() => {
       >
         <div class="ml-auto">
           <RouterLink to="/profile" :title="user.email" @click="toggleSidebar">
-            {{ user.name }}
+            {{ user?.name }}
           </RouterLink>
         </div>
 

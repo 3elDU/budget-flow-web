@@ -15,6 +15,7 @@ import NavBar from './components/NavBar.vue';
 import { RouterView } from 'vue-router';
 import { useUserStore } from '@/stores/userStore.js';
 import Toast from 'primevue/toast';
+import { computed } from 'vue';
 
-const isAuthenticated = useUserStore().isAuthenticated;
+const isAuthenticated = computed(() => useUserStore().isAuthenticated);
 </script>
