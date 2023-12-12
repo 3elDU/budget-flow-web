@@ -7,7 +7,7 @@ const api = axios;
 api.defaults.headers.common['X-Requested-With'] = 'XMLHttpRequest';
 api.defaults.headers.common['Content-Type'] = 'application/json';
 api.defaults.headers.common.Accept = 'application/json';
-api.defaults.baseURL = import.meta.env.VITE_API_ROOT + '/api/';
+api.defaults.baseURL = (import.meta.env.VITE_API_ROOT ?? 'http://localhost') + '/api/';
 
 api.interceptors.request.use((config) => {
   const userStore = useUserStore();

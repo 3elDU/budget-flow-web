@@ -25,6 +25,7 @@ async function saveChanges() {
 
   if (response.status === 200) {
     isEditMode.value = false;
+    user.settings = response.data;
 
     toast.add({ severity: 'success', summary: 'Success', detail: 'Settings saved', life: 3000 });
   }
@@ -50,7 +51,12 @@ async function saveChanges() {
       </div>
 
       <div>
-        <Checkbox :disabled="!isEditMode || isLoading" v-model="settings.show_fractional" id="showFractional" />
+        <Checkbox
+          :disabled="!isEditMode || isLoading"
+          v-model="settings.show_fractional"
+          binary
+          id="showFractional"
+        />
 
         <label for="showFractional" class="ml-2 text-sm">Show fractional numbers</label>
       </div>

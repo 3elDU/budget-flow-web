@@ -4,6 +4,7 @@ import api from '@/plugins/api.js';
 import { useToast } from 'primevue/usetoast';
 import Paginator from 'primevue/paginator';
 import CreateEditOperation from "@/components/modals/CreateEditOperation.vue";
+import {formatMoney} from "../plugins/helpers.js";
 
 const toast = useToast();
 
@@ -157,9 +158,9 @@ function getCurrency(item) {
           </template>
         </Column>
 
-        <Column field="amount" header="Amount">
+        <Column field="amount" header="Amount" class="whitespace-nowrap">
           <template #body="slotProps">
-            {{ slotProps.data.amount.toLocaleString('en-US', { style: 'currency', currency: getCurrency(slotProps.data) }) }}
+            {{ formatMoney(slotProps.data.amount, getCurrency(slotProps.data)) }}
           </template>
         </Column>
 
@@ -196,12 +197,12 @@ function getCurrency(item) {
       <div class="flex flex-col gap-4 w-64">
         <div>
           <label for="filterName">Name</label>
-          <InputText id="filterName" />
+          <InputText id="filterName" class="w-full" />
         </div>
 
         <div>
           <label for="filterDescription">Description</label>
-          <InputText id="filterDescription" />
+          <InputText id="filterDescription" class="w-full" />
         </div>
 
         <div>

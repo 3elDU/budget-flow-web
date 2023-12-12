@@ -39,3 +39,14 @@ html, body {
 .v-leave-to {
   opacity: 0;
 }
+
+.p-datepicker:not(.p-datepicker-inline) {
+  width: auto !important;
+  display: flex;
+}
+
+.p-datepicker .p-timepicker {
+  border-top: none;
+  border-left: 1px solid #424b57;
+  margin-left: .5rem;
+}

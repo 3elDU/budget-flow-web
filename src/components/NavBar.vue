@@ -54,7 +54,7 @@ const toggleSidebar = useThrottleFn(() => {
     </div>
 
     <div class="ml-auto flex flex-row pr-6 gap-12 items-center">
-      <div>{{ user?.name }}</div>
+      <div class="max-w-[10rem]">{{ user?.name }}</div>
 
       <Button link @click="userStore.logout" class="px-4 py-2 rounded-lg text-white font-bold">
         Log out

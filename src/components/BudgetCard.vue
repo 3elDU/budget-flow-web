@@ -1,6 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 import api from '@/plugins/api.js';
+import { formatMoney } from '@/plugins/helpers.js';
 
 const emits = defineEmits(['refresh', 'edit']);
 const props = defineProps({ budget: Object });
@@ -9,10 +10,7 @@ const modal = ref();
 const isLoading = ref(false);
 
 const balance = computed(() => {
-  return new Intl.NumberFormat(navigator.language, {
-    style: "currency",
-    currency: props.budget.currency_iso,
-  }).format(props.budget.balance);
+  return formatMoney(props.budget.balance, props.budget.currency_iso);
 });
 
 function editBudget() {

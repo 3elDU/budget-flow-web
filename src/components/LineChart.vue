@@ -12,6 +12,7 @@ import {
   LinearScale,
   Colors,
 } from 'chart.js';
+import {formatMoney} from "@/plugins/helpers.js";
 
 const props = defineProps({
   label: {
@@ -75,7 +76,7 @@ if (props.currency) {
             return (
               context.dataset.label +
               ': ' +
-              currencyFormatter.format(context.parsed.y)
+              formatMoney(context.parsed.y, props.currency)
             );
           },
         },
@@ -86,7 +87,7 @@ if (props.currency) {
         ticks: {
           // Customize y-axis ticks to include currency formatting
           callback: function (value) {
-            return currencyFormatter.format(value);
+            return formatMoney(value, props.currency);
           },
         },
       },
@@ -117,7 +118,7 @@ if (props.currency) {
         class="text-center"
       >
         <div class="text-2xl font-bold">
-          {{ props.currency ? currencyFormatter.format(dataset.data[0]) : dataset.data[0] }}
+          {{ props.currency ? formatMoney(dataset.data[0], currency) : dataset.data[0] }}
         </div>
         <div>{{ dataset.label }}</div>
       </div>

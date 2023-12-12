@@ -134,7 +134,7 @@ async function submit() {
     modal
     :header="props.operation ? 'Edit operation' : 'Create operation'"
     :pt="{ mask: { style: 'backdrop-filter: blur(2px)' } }"
-    :style="{ width: '400px' }"
+    :style="{ width: '600px' }"
     @update:visible="close"
   >
     <div class="flex flex-col gap-8">
@@ -149,6 +149,17 @@ async function submit() {
             option-value="id"
             option-label="name"
             :options="budgets"
+          />
+        </div>
+
+        <div>
+          <label class="block text-sm text-secondaryfg" for="made_at">Made at</label>
+          <Calendar
+            class="w-full"
+            v-model="operationForm.made_at"
+            id="made_at"
+            required
+            show-time
           />
         </div>
 
@@ -181,17 +192,6 @@ async function submit() {
         </div>
 
         <div>
-          <label class="block text-sm text-secondaryfg" for="made_at">Made at</label>
-          <Calendar
-            class="w-full"
-            v-model="operationForm.made_at"
-            id="made_at"
-            required
-            show-time
-          />
-        </div>
-
-        <div>
           <label class="block text-sm text-secondaryfg" for="amount">Amount</label>
           <InputNumber
             class="w-full"
@@ -203,8 +203,10 @@ async function submit() {
           />
         </div>
       </form>
+    </div>
 
-      <div class="flex gap-2">
+    <template #footer>
+      <div class="flex gap-2 mt-2">
         <Button
           @click="submit"
           :loading="isLoading"
@@ -219,6 +221,6 @@ async function submit() {
           severity="danger"
         />
       </div>
-    </div>
+    </template>
   </Dialog>
 </template>
