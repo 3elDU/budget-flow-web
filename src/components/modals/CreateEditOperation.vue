@@ -13,10 +13,12 @@ const props = defineProps({
   budget: {
     type: Object,
     required: false,
+    default: null,
   },
   operation: {
     type: Object,
     required: false,
+    default: null,
   },
   categories: {
     type: Array,
@@ -27,7 +29,7 @@ const props = defineProps({
     required: true,
   },
 });
-const emits = defineEmits(['update:isVisible', 'update:budget', 'refresh']);
+const emits = defineEmits(['update:isVisible', 'update:operation', 'refresh']);
 
 const budgets = ref([]);
 
@@ -117,10 +119,9 @@ async function submit() {
 
 <template>
   <Dialog
-    v-bind:visible="isVisible"
+    :visible="isVisible"
     modal
     :header="props.operation ? 'Edit operation' : 'Create operation'"
-    :pt="{ mask: { style: 'backdrop-filter: blur(2px)' } }"
     :style="{ width: '600px' }"
     @update:visible="close"
   >
@@ -129,8 +130,8 @@ async function submit() {
         <div>
           <label class="block text-sm text-secondaryfg" for="budget">Budget</label>
           <Dropdown
-            v-model="operationForm.budget_id"
             id="budget"
+            v-model="operationForm.budget_id"
             required
             class="w-full"
             option-value="id"
@@ -142,9 +143,9 @@ async function submit() {
         <div>
           <label class="block text-sm text-secondaryfg" for="made_at">Made at</label>
           <Calendar
-            class="w-full"
-            v-model="operationForm.made_at"
             id="made_at"
+            v-model="operationForm.made_at"
+            class="w-full"
             required
             show-time
           />
@@ -153,8 +154,8 @@ async function submit() {
         <div>
           <label class="block text-sm text-secondaryfg" for="name">Name</label>
           <InputText
-            v-model="operationForm.name"
             id="name"
+            v-model="operationForm.name"
             required
             class="w-full"
           />
@@ -162,15 +163,15 @@ async function submit() {
 
         <div>
           <label class="block text-sm text-secondaryfg" for="description">Description (optional)</label>
-          <Textarea v-model="operationForm.description" id="description" class="w-full max-h-[10rem]" />
+          <Textarea id="description" v-model="operationForm.description" class="w-full max-h-[10rem]" />
         </div>
 
         <div>
           <label class="block text-sm text-secondaryfg" for="categories">Categories</label>
           <MultiSelect
-            class="w-full"
-            v-model="operationForm.categories"
             id="categories"
+            v-model="operationForm.categories"
+            class="w-full"
             required
             :options="categories"
             option-label="name"
@@ -181,11 +182,11 @@ async function submit() {
         <div>
           <label class="block text-sm text-secondaryfg" for="amount">Amount</label>
           <InputNumber
+            id="amount"
+            v-model="operationForm.amount"
             class="w-full"
             max-fraction-digits="2"
             locale="en-US"
-            v-model="operationForm.amount"
-            id="amount"
             required
           />
         </div>
@@ -195,17 +196,17 @@ async function submit() {
     <template #footer>
       <div class="flex gap-2 mt-2">
         <Button
-          @click="submit"
           :loading="isLoading"
           label="Submit"
           severity="success"
+          @click="submit"
         />
 
         <Button
-          @click="close"
           :loading="isLoading"
           label="Cancel"
           severity="danger"
+          @click="close"
         />
       </div>
     </template>

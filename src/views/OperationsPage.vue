@@ -57,6 +57,10 @@ fetchOperations();
 function changePage({ page }) {
   const newPage = page + 1;
 
+  if (newPage === meta.value.current_page) {
+    return;
+  }
+
   meta.value.current_page = newPage;
 
   if (newPage >= 1 && newPage <= meta.value.last_page) {
@@ -154,6 +158,7 @@ async function fetchCategories() {
 
 fetchCategories();
 
+const settingsMenu = ref();
 const groupByDates = ref(true);
 </script>
 
@@ -163,30 +168,37 @@ const groupByDates = ref(true);
       <DataTable
         :value="groupedOperations"
         :total-records="meta.total"
-        tableStyle="min-width: 66%"
+        table-style="min-width: 66%"
         scroll-height="calc(100vh - 164px)"
         :rows="meta.per_page"
-        :rowsPerPageOptions="[10, 20, 50]"
+        :rows-per-page-options="[10, 20, 50]"
         :loading="isLoading"
         scrollable
         group-rows-by="monthYear"
         :row-group-mode="groupByDates ? 'subheader' : null"
       >
         <template #groupheader="{ data }">
-          <span class="text-gray-200">{{ data.monthYear }}</span>
+          <span class="text-gray-400 text-sm">{{ data.monthYear }}</span>
         </template>
 
         <Column field="name" header="Name" />
         <Column field="description" header="Description">
           <template #body="{ data }">
-            <div v-tooltip="data.description" class="w-5" v-if="data.description">
-              <IconMdiInfo font-size="24px" />
+            <div v-if="data.description" v-tooltip="data.description" class="w-5">
+              <i class="pi pi-info-circle text-xl" />
             </div>
           </template>
         </Column>
         <Column field="categories" header="Categories" style="max-width: 25%">
           <template #body="{ data }">
-            <Tag v-for="category in data.categories" :value="category.name" rounded class="m-0.5" :style="`background: ${category.color_hex}`" />
+            <Tag
+              v-for="category in data.categories"
+              :key="category.id"
+              :value="category.name"
+              rounded
+              class="m-0.5"
+              :style="`background: ${category.color_hex}`"
+            />
           </template>
         </Column>
 
@@ -204,19 +216,19 @@ const groupByDates = ref(true);
 
         <Column field="amount" header="Amount" class="whitespace-nowrap">
           <template #body="{ data }">
-            {{ formatMoney(data.amount, getCurrency(data)) }}
+            <span class="font-black">{{ formatMoney(data.amount, getCurrency(data)) }}</span>
           </template>
         </Column>
 
         <Column field="id" header="Actions">
           <template #body="{ data }">
             <div class="flex gap-2">
-              <Button @click="editOperation(data)" class="p-2">
-                <IconMdiEdit font-size="24" />
+              <Button class="p-2" @click="editOperation(data)">
+                <i class="pi pi-pencil text-xl" />
               </Button>
 
-              <Button severity="danger" @click="deleteOperation(data)" class="p-2">
-                <IconMdiDelete font-size="24" />
+              <Button severity="danger" class="p-2" @click="deleteOperation(data)">
+                <i class="pi pi-trash text-xl" />
               </Button>
             </div>
           </template>
@@ -227,39 +239,47 @@ const groupByDates = ref(true);
       </DataTable>
 
       <Paginator
-        :totalRecords="meta.total"
         v-model:rows="perPage"
+        :total-records="meta.total"
         :first="1"
-        :currentPage="meta.current_page"
-        :rowsPerPageOptions="[10, 20, 30]"
+        :current-page="meta.current_page"
+        :rows-per-page-options="[10, 20, 30]"
         @page="changePage"
       >
         <template #start>
-          <Button label="Create" @click="isVisibleOperationModal = true" />
+          <Button class="px-0 w-[50px] flex justify-center" @click="isVisibleOperationModal = true">
+            <i class="pi pi-plus text-xl" />
+          </Button>
         </template>
 
         <template #end>
-          <div class="flex items-center">
-            <InputSwitch v-model="groupByDates" />
-            <span class="ml-2">Group by dates</span>
-          </div>
+          <Button class="px-0 w-[50px] flex justify-center" @click="settingsMenu?.toggle">
+            <i class="pi pi-cog text-xl" />
+          </Button>
+
+          <OverlayPanel ref="settingsMenu">
+            <div class="flex items-center">
+              <InputSwitch v-model="groupByDates" />
+              <span class="ml-2">Group by dates</span>
+            </div>
+          </OverlayPanel>
         </template>
       </Paginator>
     </div>
 
     <FiltersPanel
       v-model="filters"
-      @apply-filters="fetchOperations"
       :categories="categories"
+      @apply-filters="fetchOperations"
     />
 
     <CreateEditOperation
       v-model:is-visible="isVisibleOperationModal"
       v-model:operation="operation"
-      @refresh="fetchOperations"
       :categories="categories"
+      @refresh="fetchOperations"
     />
 
-    <ModalsConfirmationModal ref="modal" />
+    <ConfirmationModal ref="modal" />
   </div>
 </template>

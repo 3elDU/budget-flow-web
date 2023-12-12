@@ -4,6 +4,7 @@ import { useDebounceFn } from '@vueuse/core';
 import { useUserStore } from '@/stores/userStore.js';
 import api from '@/plugins/api.js';
 import { format } from 'date-fns';
+import LineChart from "@/components/LineChart.vue";
 
 const userStore = useUserStore();
 
@@ -123,31 +124,33 @@ const chartData = computed(() => {
         <div class="w-full sm:w-fit">
           <label class="text-sm mr-2" for="startDate">Start date</label>
 
-          <Calendar v-model="startTime" @update:model-value="refreshData()" id="startDate" />
+          <Calendar id="startDate" v-model="startTime" @update:model-value="refreshData()" />
         </div>
 
         <div class="w-full sm:w-fit">
           <label class="text-sm mr-2" for="endDate">End date</label>
 
-          <Calendar v-model="endTime" @update:model-value="refreshData()" id="endDate" />
+          <Calendar id="endDate" v-model="endTime" @update:model-value="refreshData()" />
         </div>
       </div>
 
       <div>
         <label class="text-sm mr-2" for="period">Period</label>
         <Dropdown
-          :options="periods"
-          v-model="period"
-          @change="refreshData()"
           id="period"
+          v-model="period"
+          :options="periods"
           option-label="label"
           option-value="value"
+          @change="refreshData()"
         />
       </div>
     </div>
 
     <div v-if="isError">
-      <p class="text-xl font-bold">No analytics available</p>
+      <p class="text-xl font-bold">
+        No analytics available
+      </p>
     </div>
 
     <div class="flex flex-row flex-wrap gap-4 justify-center">

@@ -2,6 +2,8 @@
 import { ref } from 'vue';
 import { useThrottleFn } from '@vueuse/core';
 import api from '@/plugins/api.js';
+import BudgetCard from '@/components/BudgetCard.vue';
+import CreateEditBudget from '@/components/modals/CreateEditBudget.vue';
 
 const budgets = ref(null);
 const isLoading = ref(false);
@@ -38,30 +40,32 @@ function editBudget(item) {
   <div class="p-4 h-full">
     <Transition mode="out-in">
       <div v-if="isError !== null" class="grow flex flex-col gap-4 justify-center items-center">
-        <p class="text-3xl font-bold">Failed to load budgets</p>
+        <p class="text-3xl font-bold">
+          Failed to load budgets
+        </p>
 
         <Button label="Retry" @click="retryFetch" />
       </div>
 
       <div v-else-if="isLoading" class="flex flex-col justify-center items-center gap-2 h-full">
-        <IconLineMdLoadingTwotoneLoop font-size="36px" />
+        <ProgressSpinner />
         Loading budgets
       </div>
 
       <div v-else class="grid gap-4 lg:grid-cols-4 md:grid-cols-3 sm:grid-cols-2 grid-cols-1">
-        <div
+        <button
           v-if="!isLoading"
-          class="bg-secondary cursor-pointer rounded-lg p-4 flex flex-col justify-center items-center gap-2"
+          class="bg-secondary rounded-lg p-4 flex flex-col justify-center items-center gap-2"
           @click="isVisibleBudgetModal = true"
         >
-          <IconMdiPlus font-size="24px" />
+          <i class="pi pi-plus text-xl" />
           <span class="font-semibold">Create new budget</span>
-        </div>
+        </button>
 
         <BudgetCard
-          v-for="budget in budgets"
-          :budget="budget"
-          :key="budget.id"
+          v-for="item in budgets"
+          :key="item.id"
+          :budget="item"
           class="w-full"
           @edit="editBudget"
           @refresh="fetchBudgets"
@@ -69,7 +73,7 @@ function editBudget(item) {
       </div>
     </Transition>
 
-    <ModalsCreateEditBudget
+    <CreateEditBudget
       v-model:is-visible="isVisibleBudgetModal"
       v-model:budget="budget"
       @refresh="fetchBudgets"

@@ -9,6 +9,17 @@
   @tailwind utilities;
 }
 
+:root {
+  --primary-color: #534DC6;
+  --primaryfg: #E1EBED;
+  --primarybg: #010104;
+  --text-color: #B0B5B6;
+  --secondary-color: #19182B;
+  --accent: #C07BBC;
+  --success: #639A55;
+  --error: #C95B5B;
+}
+
 html {
   font-family: "Inter Variable", sans-serif;
   @apply text-primaryfg bg-primarybg;
@@ -52,10 +63,13 @@ html, body {
 }
 
 .p-datatable .p-datatable-tbody > tr.p-rowgroup-header {
-  background: #111827;
-  transform: translateY(-2px);
+  background: #1A2330;
 }
 
 .p-datatable .p-datatable-tbody > tr.p-rowgroup-header > td {
   padding: 0.5rem 1rem;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  border: none;
 }

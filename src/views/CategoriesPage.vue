@@ -69,15 +69,17 @@ async function deleteCategory(item) {
       :value="categories"
     >
       <template #header>
-        <Button @click="isVisibleCategoryModal = true" label="Create" />
+        <Button icon="pi pi-plus" label="Create" @click="isVisibleCategoryModal = true" />
       </template>
 
       <Column field="name" header="Name" />
       <Column field="description" header="Description" />
       <Column field="color_hex" header="Color">
         <template #body="slotProps">
-          <div class="flex justify-center">
-            <div class="w-4 h-4 rounded-full" :style="{ backgroundColor: slotProps.data.color_hex }"></div>
+          <div class="flex items-center">
+            <div class="w-8 h-8 rounded mr-2" :style="{ backgroundColor: slotProps.data.color_hex }" />
+
+            {{ slotProps.data.color_hex }}
           </div>
         </template>
       </Column>
@@ -96,13 +98,13 @@ async function deleteCategory(item) {
 
       <Column field="actions" header="Actions">
         <template #body="slotProps">
-          <div class="flex justify-center gap-2">
-            <Button @click="editCategory(slotProps.data)" class="p-2">
-              <IconMdiEdit font-size="24" />
+          <div class="flex gap-2">
+            <Button class="p-2" @click="editCategory(slotProps.data)">
+              <i class="pi pi-pencil text-xl" />
             </Button>
 
-            <Button severity="danger" @click="deleteCategory(slotProps.data)" class="p-2">
-              <IconMdiDelete font-size="24" />
+            <Button severity="danger" class="p-2" @click="deleteCategory(slotProps.data)">
+              <i class="pi pi-trash text-xl" />
             </Button>
           </div>
         </template>
@@ -115,6 +117,6 @@ async function deleteCategory(item) {
       @refresh="fetchCategories"
     />
 
-    <ModalsConfirmationModal ref="modal" />
+    <ConfirmationModal ref="modal" />
   </div>
 </template>

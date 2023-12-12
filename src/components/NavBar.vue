@@ -3,7 +3,7 @@ import { useMediaQuery, useThrottleFn } from '@vueuse/core';
 import { ref } from 'vue';
 import { RouterLink } from 'vue-router';
 import { useUserStore } from '@/stores/userStore.js';
-import router from "@/plugins/router.js";
+import router from '@/plugins/router.js';
 
 const userStore = useUserStore();
 const user = userStore.user;
@@ -34,29 +34,33 @@ const toggleSidebar = useThrottleFn(() => {
     class="bg-secondary flex flex-row px-6 py-2.5 gap-6 font-bold items-center"
   >
     <RouterLink to="/dashboard" class="flex flex-row">
-      <div class="text-2xl">Budget-Flow</div>
+      <div class="text-2xl">
+        Budget-Flow
+      </div>
     </RouterLink>
 
     <div class="flex flex-row pl-6 gap-6">
       <Button
         v-for="link in links"
         :key="link.name"
-        @click="router.push(link.to)"
         link
         :class="{
-          'bg-primary': $route.path === link.to,
-          'bg-secondary': $route.path !== link.to,
+          'bg-primary': router.currentRoute.value.path === link.to,
+          'bg-secondary': router.currentRoute.value.path !== link.to,
         }"
         class="px-4 py-2 rounded-lg text-white font-bold"
+        @click="router.push(link.to)"
       >
         {{ link.name }}
       </Button>
     </div>
 
     <div class="ml-auto flex flex-row pr-6 gap-12 items-center">
-      <div class="max-w-[10rem]">{{ user?.name }}</div>
+      <div class="max-w-[10rem]">
+        {{ user?.name }}
+      </div>
 
-      <Button link @click="userStore.logout" class="px-4 py-2 rounded-lg text-white font-bold">
+      <Button link class="px-4 py-2 rounded-lg text-white font-bold" @click="userStore.logout">
         Log out
       </Button>
     </div>
@@ -65,9 +69,9 @@ const toggleSidebar = useThrottleFn(() => {
   <div v-else class="mb-16 relative">
     <div class="fixed top-0 z-30 w-full h-16 bg-primarybg" />
 
-    <button @click="toggleSidebar" class="fixed z-50 top-4 left-4">
-      <IconMdiClose v-if="isSidebarOpen" width="32" height="32" />
-      <IconMdiMenu v-else width="32" height="32" />
+    <button class="fixed z-50 top-4 left-4" @click="toggleSidebar">
+      <i v-if="isSidebarOpen" class="pi pi-bars text-xl" />
+      <i v-else class="pi pi-times text-xl" />
     </button>
 
     <Transition name="sidebar">
@@ -91,7 +95,9 @@ const toggleSidebar = useThrottleFn(() => {
         </RouterLink>
 
         <div class="mt-8 flex flex-col gap-6 justify-left">
-          <button @click="userStore.logout">Log out</button>
+          <button @click="userStore.logout">
+            Log out
+          </button>
         </div>
       </nav>
     </Transition>

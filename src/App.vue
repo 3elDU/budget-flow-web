@@ -11,11 +11,11 @@
 </template>
 
 <script setup>
-import NavBar from './components/NavBar.vue';
 import { RouterView } from 'vue-router';
 import { useUserStore } from '@/stores/userStore.js';
-import Toast from 'primevue/toast';
 import { computed } from 'vue';
+import NavBar from './components/NavBar.vue';
+import Toast from 'primevue/toast';
 
 const isAuthenticated = computed(() => useUserStore().isAuthenticated);
 </script>

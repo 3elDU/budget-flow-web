@@ -21,6 +21,7 @@ const props = defineProps({
   },
   data: {
     type: Object,
+    required: true,
   },
   loading: {
     type: Boolean,
@@ -31,11 +32,6 @@ const props = defineProps({
     type: String,
     default: null,
   },
-});
-const currencyFormatter = new Intl.NumberFormat(navigator.language, {
-  style: 'currency',
-  currency: props.currency ?? 'USD',
-  minimumFractionDigits: 0,
 });
 
 const singleDataPoint = computed(
@@ -98,7 +94,9 @@ if (props.currency) {
 
 <template>
   <div class="relative p-4 bg-secondary rounded-2xl flex flex-col items-center gap-4">
-    <p class="text-xl font-bold">{{ props.label }}</p>
+    <p class="text-xl font-bold">
+      {{ props.label }}
+    </p>
 
     <Line
       :data="props.data"
@@ -109,11 +107,11 @@ if (props.currency) {
 
     <div class="absolute mx-8 top-1/2 -translate-y-1/3 flex flex-col sm:flex-row gap-4">
       <div v-if="props.loading">
-        <IconLineMdLoadingTwotoneLoop font-size="24" />
+        <ProgressSpinner />
       </div>
       <div
-        v-else-if="singleDataPoint"
         v-for="(dataset, i) in data.datasets"
+        v-else-if="singleDataPoint"
         :key="i"
         class="text-center"
       >

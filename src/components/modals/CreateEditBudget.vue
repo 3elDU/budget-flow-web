@@ -12,6 +12,7 @@ const props = defineProps({
   budget: {
     type: Object,
     required: false,
+    default: null,
   },
   isVisible: {
     type: Boolean,
@@ -84,10 +85,9 @@ async function submit() {
 
 <template>
   <Dialog
-    v-bind:visible="isVisible"
+    :visible="isVisible"
     modal
     :header="props.budget ? 'Edit budget' : 'Create budget'"
-    :pt="{ mask: { style: 'backdrop-filter: blur(2px)' } }"
     :style="{ width: '400px' }"
     @update:visible="close"
   >
@@ -95,17 +95,27 @@ async function submit() {
       <form ref="form" class="flex flex-col gap-4">
         <div>
           <label class="block text-sm text-secondaryfg" for="name">Name</label>
-          <InputText v-model="budgetForm.name" id="name" required class="w-full" />
+          <InputText
+            id="name"
+            v-model="budgetForm.name"
+            required
+            class="w-full"
+          />
         </div>
 
         <div>
           <label class="block text-sm text-secondaryfg" for="description">Description (optional)</label>
-          <Textarea v-model="budgetForm.description" id="description" class="w-full max-h-[10rem]" />
+          <Textarea id="description" v-model="budgetForm.description" class="w-full max-h-[10rem]" />
         </div>
 
         <div>
           <label class="block text-sm text-secondaryfg" for="currency_iso">Currency</label>
-          <Dropdown v-model="budgetForm.currency_iso" id="currency_iso" required :options="['USD', 'EUR', 'UAH']" />
+          <Dropdown
+            id="currency_iso"
+            v-model="budgetForm.currency_iso"
+            required
+            :options="['USD', 'EUR', 'UAH']"
+          />
         </div>
 
         <div>
@@ -113,12 +123,12 @@ async function submit() {
 
           <div class="flex">
             <input
-              v-model="budgetForm.color_hex"
               id="color_hex"
+              v-model="budgetForm.color_hex"
               type="color"
               class="mr-4 color-select-default"
               required
-            />
+            >
 
             <InputText v-model="budgetForm.color_hex" required class="w-full" />
           </div>
@@ -127,17 +137,17 @@ async function submit() {
 
       <div class="flex gap-2">
         <Button
-          @click="submit"
           :loading="isLoading"
           label="Submit"
           severity="success"
+          @click="submit"
         />
 
         <Button
-          @click="close"
           :loading="isLoading"
           label="Cancel"
           severity="danger"
+          @click="close"
         />
       </div>
     </div>

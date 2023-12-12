@@ -12,6 +12,7 @@ const props = defineProps({
   category: {
     type: Object,
     required: false,
+    default: null,
   },
   isVisible: {
     type: Boolean,
@@ -82,10 +83,9 @@ async function submit() {
 
 <template>
   <Dialog
-    v-bind:visible="isVisible"
+    :visible="isVisible"
     modal
     :header="props.category ? 'Edit category' : 'Create category'"
-    :pt="{ mask: { style: 'backdrop-filter: blur(2px)' } }"
     :style="{ width: '400px' }"
     @update:visible="close"
   >
@@ -94,8 +94,8 @@ async function submit() {
         <div>
           <label class="block text-sm text-secondaryfg" for="name">Name</label>
           <InputText
-            v-model="categoryForm.name"
             id="name"
+            v-model="categoryForm.name"
             required
             class="w-full"
           />
@@ -103,7 +103,7 @@ async function submit() {
 
         <div>
           <label class="block text-sm text-secondaryfg" for="description">Description (optional)</label>
-          <Textarea v-model="categoryForm.description" id="description" class="w-full max-h-[10rem]" />
+          <Textarea id="description" v-model="categoryForm.description" class="w-full max-h-[10rem]" />
         </div>
 
         <div>
@@ -111,12 +111,12 @@ async function submit() {
 
           <div class="flex">
             <input
-              v-model="categoryForm.color_hex"
               id="color_hex"
+              v-model="categoryForm.color_hex"
               type="color"
               class="mr-4 color-select-default"
               required
-            />
+            >
 
             <InputText v-model="categoryForm.color_hex" required class="w-full" />
           </div>
@@ -125,17 +125,17 @@ async function submit() {
 
       <div class="flex gap-2">
         <Button
-          @click="submit"
           :loading="isLoading"
           label="Submit"
           severity="success"
+          @click="submit"
         />
 
         <Button
-          @click="close"
           :loading="isLoading"
           label="Cancel"
           severity="danger"
+          @click="close"
         />
       </div>
     </div>

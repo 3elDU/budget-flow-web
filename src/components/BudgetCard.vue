@@ -4,7 +4,12 @@ import api from '@/plugins/api.js';
 import { formatMoney } from '@/plugins/helpers.js';
 
 const emits = defineEmits(['refresh', 'edit']);
-const props = defineProps({ budget: Object });
+const props = defineProps({
+  budget: {
+    type: Object,
+    required: true,
+  },
+});
 
 const modal = ref();
 const isLoading = ref(false);
@@ -52,27 +57,39 @@ async function deleteBudget() {
         {{ props.budget.description }}
       </div>
 
-      <div class="text-2xl font-black">{{ balance }}</div>
+      <div class="text-2xl font-black">
+        {{ balance }}
+      </div>
 
       <div class="flex mt-auto p-buttonset">
         <Button severity="success" :loading="isLoading" class="!w-full !flex justify-center py-1">
-          <IconMdiArrowUp font-size="24" />
+          <i class="pi pi-chevron-up text-xl" />
         </Button>
 
         <Button severity="danger" :loading="isLoading" class="!w-full !flex justify-center py-1">
-          <IconMdiArrowDown font-size="24" />
+          <i class="pi pi-chevron-down text-xl" />
         </Button>
 
-        <Button severity="warning" @click="editBudget" :loading="isLoading" class="!w-full !flex justify-center py-1">
-          <IconMdiEdit font-size="24" />
+        <Button
+          severity="warning"
+          :loading="isLoading"
+          class="!w-full !flex justify-center py-1"
+          @click="editBudget"
+        >
+          <i class="pi pi-pencil text-xl" />
         </Button>
 
-        <Button severity="danger" @click="deleteBudget" :loading="isLoading" class="!w-full !flex justify-center py-1">
-          <IconMdiDelete font-size="24" />
+        <Button
+          severity="danger"
+          :loading="isLoading"
+          class="!w-full !flex justify-center py-1"
+          @click="deleteBudget"
+        >
+          <i class="pi pi-trash text-xl" />
         </Button>
       </div>
     </div>
 
-    <ModalsConfirmationModal ref="modal" />
+    <ConfirmationModal ref="modal" />
   </div>
 </template>

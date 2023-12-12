@@ -39,8 +39,8 @@ defineExpose({ confirm });
       <p>{{ text }}</p>
 
       <div class="flex gap-2 self-end">
-        <Button @click="resolve(true)" severity="danger" :label="confirmation" />
-        <Button @click="resolve(false)" label="No" />
+        <Button severity="danger" :label="confirmation" @click="resolve(true)" />
+        <Button label="No" @click="resolve(false)" />
       </div>
     </div>
   </Dialog>

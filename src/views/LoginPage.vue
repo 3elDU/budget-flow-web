@@ -60,17 +60,30 @@ async function login() {
     @keydown.enter="login"
   >
     <div class="flex flex-col items-left mx-4 w-full max-w-[300px]">
-      <h1 class="text-lg font-semibold mb-6">Login</h1>
+      <h1 class="text-lg font-semibold mb-6">
+        Login
+      </h1>
 
       <form ref="form" class="flex flex-col gap-6">
         <span class="p-float-label">
-            <InputText v-model="email" id="email" required class="w-full" />
-            <label class="text-sm text-secondaryfg" for="email">E-mail</label>
+          <InputText
+            id="email"
+            v-model="email"
+            required
+            class="w-full"
+          />
+          <label class="text-sm text-secondaryfg" for="email">E-mail</label>
         </span>
 
         <span class="p-float-label">
-            <InputText v-model="password" id="password" required type="password" class="w-full" />
-            <label class="text-sm text-secondaryfg" for="password">Password</label>
+          <InputText
+            id="password"
+            v-model="password"
+            required
+            type="password"
+            class="w-full"
+          />
+          <label class="text-sm text-secondaryfg" for="password">Password</label>
         </span>
 
         <ul v-if="errors.length > 0" class="mt-3 ml-4 list-disc">
@@ -79,7 +92,12 @@ async function login() {
           </li>
         </ul>
 
-        <Button label="Login" type="button" @click="login" :loading="isLoading" />
+        <Button
+          label="Login"
+          type="button"
+          :loading="isLoading"
+          @click="login"
+        />
       </form>
     </div>
   </div>

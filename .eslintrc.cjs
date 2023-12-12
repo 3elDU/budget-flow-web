@@ -3,7 +3,7 @@ module.exports = {
     browser: true,
     es2021: true,
   },
-  extends: ["eslint:recommended", "plugin:vue/vue3-essential", "prettier"],
+  extends: ["eslint:recommended", "plugin:vue/vue3-recommended"],
   overrides: [
     {
       env: {
@@ -20,5 +20,10 @@ module.exports = {
     sourceType: "module",
   },
   plugins: ["vue"],
-  rules: {},
+  rules: {
+    'vue/max-attributes-per-line': ['error', {
+      singleline: { max: 3 },
+      multiline: { max: 1 }
+    }]
+  },
 };

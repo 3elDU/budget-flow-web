@@ -50,28 +50,22 @@ const filterAmount = ref({
   value: null,
 });
 
+const filterObjects = [
+  filterName,
+  filterDescription,
+  filterCategories,
+  filterMadeAt,
+  filterAmount,
+];
+
 const filters = computed(() => {
   const filters = [];
 
-  if (filterName.value.value) {
-    filters.push(filterName.value);
-  }
-
-  if (filterDescription.value.value) {
-    filters.push(filterDescription.value);
-  }
-
-  if (filterCategories.value.value) {
-    filters.push(filterCategories.value);
-  }
-
-  if (filterMadeAt.value.operator && filterMadeAt.value.value) {
-    filters.push(filterMadeAt.value);
-  }
-
-  if (filterAmount.value.operator && filterAmount.value.value) {
-    filters.push(filterAmount.value);
-  }
+  filterObjects.forEach((filter) => {
+    if (filter.value.value !== '' && filter.value.value !== null) {
+      filters.push(filter.value);
+    }
+  });
 
   return filters;
 });
@@ -114,20 +108,20 @@ function resetFilters() {
     <div class="flex flex-col gap-4 w-96">
       <div>
         <label for="filterName">Name</label>
-        <InputText id="filterName" class="w-full" v-model="filterName.value" />
+        <InputText id="filterName" v-model="filterName.value" class="w-full" />
       </div>
 
       <div>
         <label for="filterDescription">Description</label>
-        <InputText id="filterDescription" class="w-full" v-model="filterDescription.value" />
+        <InputText id="filterDescription" v-model="filterDescription.value" class="w-full" />
       </div>
 
       <div>
         <label for="filterCategories">Category</label>
         <MultiSelect
           id="filterCategories"
-          class="w-full"
           v-model="filterCategories.value"
+          class="w-full"
           :options="categories"
           option-value="id"
           option-label="name"
@@ -138,19 +132,19 @@ function resetFilters() {
         <label for="filterDate">Made at</label>
         <div class="flex gap-2">
           <Dropdown
-            :options="filterTypes"
             v-model="filterMadeAt.operator"
+            :options="filterTypes"
             class="w-32 flex-none"
           />
 
           <Calendar id="filterDate" v-model="filterMadeAt.value" />
 
           <Button
-            class="p-0 flex-none w-[50px] flex justify-center"
             v-if="filterMadeAt.value || filterMadeAt.operator"
+            class="p-0 flex-none w-[50px] flex justify-center"
             @click="clearFilter(filterMadeAt, true)"
           >
-            <IconMdiClose font-size="24" />
+            <i class="pi pi-times text-xl" />
           </Button>
         </div>
       </div>
@@ -159,24 +153,24 @@ function resetFilters() {
         <label for="filterAmount">Amount</label>
         <div class="flex gap-2">
           <Dropdown
-            :options="filterTypes"
             v-model="filterAmount.operator"
+            :options="filterTypes"
             class="w-32 flex-none"
           />
 
           <InputNumber
             id="filterAmount"
-            :max-fraction-digits="2"
-            inputStyle="width: 1%"
             v-model="filterAmount.value"
+            :max-fraction-digits="2"
+            input-style="width: 1%"
           />
 
           <Button
-            class="p-0 flex-none w-[50px] flex justify-center"
             v-if="filterAmount.value || filterAmount.operator"
+            class="p-0 flex-none w-[50px] flex justify-center"
             @click="clearFilter(filterAmount, true)"
           >
-            <IconMdiClose font-size="24" />
+            <i class="pi pi-times text-xl" />
           </Button>
         </div>
       </div>
