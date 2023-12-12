@@ -270,6 +270,7 @@ const groupByDates = ref(true);
     <FiltersPanel
       v-model="filters"
       :categories="categories"
+      :budgets="budgets"
       @apply-filters="fetchOperations"
     />
 

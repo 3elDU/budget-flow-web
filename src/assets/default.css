@@ -10,10 +10,9 @@
 }
 
 :root {
-  --primary-color: #534DC6;
+  --primary-color: #534DC6 !important;
   --primaryfg: #E1EBED;
   --primarybg: #010104;
-  --text-color: #B0B5B6;
   --secondary-color: #19182B;
   --accent: #C07BBC;
   --success: #639A55;

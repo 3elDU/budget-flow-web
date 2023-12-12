@@ -11,9 +11,20 @@ defineProps({
     type: Array,
     required: true,
   },
+  budgets: {
+    type: Array,
+    required: true,
+  },
 });
 
 const filterTypes = ['=', '!=', '>', '<', '>=', '<=', 'like', 'not like'];
+
+const filterBudget = ref({
+  type: 'where',
+  field: 'budget_id',
+  operator: '=',
+  value: null,
+});
 
 const filterName = ref({
   type: 'where',
@@ -51,6 +62,7 @@ const filterAmount = ref({
 });
 
 const filterObjects = [
+  filterBudget,
   filterName,
   filterDescription,
   filterCategories,
@@ -93,6 +105,7 @@ function clearFilter(filter, clearOperator = false) {
 }
 
 function resetFilters() {
+  clearFilter(filterBudget);
   clearFilter(filterName);
   clearFilter(filterDescription);
   clearFilter(filterCategories);
@@ -106,6 +119,19 @@ function resetFilters() {
 <template>
   <Panel header="Filters">
     <div class="flex flex-col gap-4 w-96">
+      <div>
+        <label for="budgetId">Budget</label>
+        <Dropdown
+          id="budgetId"
+          v-model="filterBudget.value"
+          class="w-full"
+          :options="budgets"
+          option-value="id"
+          option-label="name"
+          show-clear
+        />
+      </div>
+
       <div>
         <label for="filterName">Name</label>
         <InputText id="filterName" v-model="filterName.value" class="w-full" />
