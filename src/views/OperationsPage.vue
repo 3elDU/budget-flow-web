@@ -2,7 +2,7 @@
 import { ref } from 'vue';
 import api from '@/plugins/api.js';
 import { useToast } from 'primevue/usetoast';
-import { formatMoney } from '../plugins/helpers.js';
+import { formatDate, formatMoney, parseDate } from '../plugins/helpers.js';
 import Paginator from 'primevue/paginator';
 import CreateEditOperation from '@/components/modals/CreateEditOperation.vue';
 import FiltersPanel from '@/components/FiltersPanel.vue';
@@ -167,13 +167,13 @@ fetchCategories();
 
         <Column field="created_at" header="Created at">
           <template #body="slotProps">
-            {{ new Date(slotProps.data.created_at).toLocaleDateString() }}
+            {{ formatDate(parseDate(slotProps.data.created_at)) }}
           </template>
         </Column>
 
         <Column field="made_at" header="Made at">
           <template #body="slotProps">
-            {{ new Date(slotProps.data.made_at).toLocaleDateString() }}
+            {{ formatDate(parseDate(slotProps.data.made_at)) }}
           </template>
         </Column>
 

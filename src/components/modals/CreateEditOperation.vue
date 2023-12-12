@@ -2,6 +2,7 @@
 import { ref, watch, toRaw } from 'vue';
 import api from '@/plugins/api.js';
 import { useToast } from 'primevue/usetoast';
+import { parseDate } from '@/plugins/helpers.js';
 
 const toast = useToast();
 
@@ -73,7 +74,7 @@ watch(() => props.isVisible, (value) => {
     if (props.operation) {
       operationForm.value = structuredClone(toRaw(props.operation));
       operationForm.value.categories = operationForm.value.categories.map((category) => category.id);
-      operationForm.value.made_at = new Date(operationForm.value.made_at);
+      operationForm.value.made_at = parseDate(operationForm.value.made_at);
     }
   }
 });
