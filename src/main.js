@@ -8,8 +8,9 @@ import mitt from 'mitt';
 import PrimeVue from 'primevue/config';
 import ToastService from 'primevue/toastservice';
 import 'primevue/resources/themes/lara-dark-purple/theme.css'
-import { createPinia } from "pinia";
-import piniaPluginPersistedstate from "pinia-plugin-persistedstate";
+import { createPinia } from 'pinia';
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate';
+import Tooltip from 'primevue/tooltip';
 
 const app = createApp(App);
 const emitter = mitt();
@@ -22,5 +23,6 @@ app
   .use(router)
   .use(PrimeVue, { ripple: true })
   .use(ToastService)
+  .directive('tooltip', Tooltip)
   .provide('bus', emitter)
   .mount('#app');

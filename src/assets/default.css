@@ -50,3 +50,12 @@ html, body {
   border-left: 1px solid #424b57;
   margin-left: .5rem;
 }
+
+.p-datatable .p-datatable-tbody > tr.p-rowgroup-header {
+  background: #111827;
+  transform: translateY(-2px);
+}
+
+.p-datatable .p-datatable-tbody > tr.p-rowgroup-header > td {
+  padding: 0.5rem 1rem;
+}

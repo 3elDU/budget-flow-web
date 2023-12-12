@@ -1,11 +1,12 @@
 <script setup>
-import { ref } from 'vue';
+import {ref, computed} from 'vue';
 import api from '@/plugins/api.js';
-import { useToast } from 'primevue/usetoast';
-import { formatDate, formatMoney, parseDate } from '../plugins/helpers.js';
+import {useToast} from 'primevue/usetoast';
+import {formatDate, formatMoney, parseDate} from '../plugins/helpers.js';
 import Paginator from 'primevue/paginator';
 import CreateEditOperation from '@/components/modals/CreateEditOperation.vue';
 import FiltersPanel from '@/components/FiltersPanel.vue';
+import {format} from "date-fns";
 
 const toast = useToast();
 
@@ -14,6 +15,16 @@ const operations = ref([]);
 const meta = ref({});
 const perPage = ref(10);
 const filters = ref([]);
+
+const groupedOperations = computed(() => {
+  const newOperations = operations.value;
+
+  newOperations.forEach((operation) => {
+    operation.monthYear = format(parseDate(operation.made_at), 'MMMM yyyy');
+  });
+
+  return newOperations;
+});
 
 async function fetchOperations() {
   isLoading.value = true;
@@ -142,13 +153,15 @@ async function fetchCategories() {
 }
 
 fetchCategories();
+
+const groupByDates = ref(true);
 </script>
 
 <template>
   <div class="flex justify-center gap-4 p-4 overflow-hidden">
     <div>
       <DataTable
-        :value="operations"
+        :value="groupedOperations"
         :total-records="meta.total"
         tableStyle="min-width: 66%"
         scroll-height="calc(100vh - 164px)"
@@ -156,46 +169,61 @@ fetchCategories();
         :rowsPerPageOptions="[10, 20, 50]"
         :loading="isLoading"
         scrollable
+        group-rows-by="monthYear"
+        :row-group-mode="groupByDates ? 'subheader' : null"
       >
+        <template #groupheader="{ data }">
+          <span class="text-gray-200">{{ data.monthYear }}</span>
+        </template>
+
         <Column field="name" header="Name" />
-        <Column field="description" header="Description" style="max-width: 10%;  overflow-x: auto" />
+        <Column field="description" header="Description">
+          <template #body="{ data }">
+            <div v-tooltip="data.description" class="w-5" v-if="data.description">
+              <IconMdiInfo font-size="24px" />
+            </div>
+          </template>
+        </Column>
         <Column field="categories" header="Categories" style="max-width: 25%">
-          <template #body="slotProps">
-            <Tag v-for="category in slotProps.data.categories" :value="category.name" rounded class="m-0.5" :style="`background: ${category.color_hex}`" />
+          <template #body="{ data }">
+            <Tag v-for="category in data.categories" :value="category.name" rounded class="m-0.5" :style="`background: ${category.color_hex}`" />
           </template>
         </Column>
 
         <Column field="created_at" header="Created at">
-          <template #body="slotProps">
-            {{ formatDate(parseDate(slotProps.data.created_at)) }}
+          <template #body="{ data }">
+            {{ formatDate(parseDate(data.created_at)) }}
           </template>
         </Column>
 
         <Column field="made_at" header="Made at">
-          <template #body="slotProps">
-            {{ formatDate(parseDate(slotProps.data.made_at)) }}
+          <template #body="{ data }">
+            {{ formatDate(parseDate(data.made_at)) }}
           </template>
         </Column>
 
         <Column field="amount" header="Amount" class="whitespace-nowrap">
-          <template #body="slotProps">
-            {{ formatMoney(slotProps.data.amount, getCurrency(slotProps.data)) }}
+          <template #body="{ data }">
+            {{ formatMoney(data.amount, getCurrency(data)) }}
           </template>
         </Column>
 
-        <Column>
-          <template #body="slotProps">
+        <Column field="id" header="Actions">
+          <template #body="{ data }">
             <div class="flex gap-2">
-              <Button @click="editOperation(slotProps.data)" class="p-2">
+              <Button @click="editOperation(data)" class="p-2">
                 <IconMdiEdit font-size="24" />
               </Button>
 
-              <Button severity="danger" @click="deleteOperation(slotProps.data)" class="p-2">
+              <Button severity="danger" @click="deleteOperation(data)" class="p-2">
                 <IconMdiDelete font-size="24" />
               </Button>
             </div>
           </template>
         </Column>
+
+        <!-- Workaround for colspan count bug -->
+        <Column class="p-0" />
       </DataTable>
 
       <Paginator
@@ -208,6 +236,13 @@ fetchCategories();
       >
         <template #start>
           <Button label="Create" @click="isVisibleOperationModal = true" />
+        </template>
+
+        <template #end>
+          <div class="flex items-center">
+            <InputSwitch v-model="groupByDates" />
+            <span class="ml-2">Group by dates</span>
+          </div>
         </template>
       </Paginator>
     </div>
