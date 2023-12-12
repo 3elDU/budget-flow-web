@@ -11,9 +11,13 @@
 
 :root {
   --primary-color: #534DC6 !important;
+  --primary-dark-color: #292663;
   --primaryfg: #E1EBED;
   --primarybg: #010104;
-  --secondary-color: #19182B;
+  --secondary-300: #26253b;
+  --secondary-400: #201f34;
+  --secondary-500: #19182B;
+  --secondary-600: #131320;
   --accent: #C07BBC;
   --success: #639A55;
   --error: #C95B5B;
@@ -61,14 +65,50 @@ html, body {
   margin-left: .5rem;
 }
 
-.p-datatable .p-datatable-tbody > tr.p-rowgroup-header {
-  background: #1A2330;
-}
-
 .p-datatable .p-datatable-tbody > tr.p-rowgroup-header > td {
   padding: 0.5rem 1rem;
 }
 
 .p-datatable .p-datatable-tbody > tr > td {
   border: none;
+}
+
+.p-panel-header,
+.p-panel-content,
+.p-panel-footer,
+.p-paginator,
+.p-toolbar,
+.p-datatable-header,
+.p-dialog-header,
+.p-dialog-content,
+.p-dialog-footer,
+.p-dialog,
+.p-datepicker,
+.p-datepicker-header {
+  background: var(--secondary-500);
+  border-color: var(--secondary-300) !important;
+}
+
+.p-dropdown,
+.p-inputtext,
+.p-multiselect {
+  background: var(--secondary-600);
+  border-color: var(--secondary-300) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr {
+  background: var(--secondary-500);
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background: var(--secondary-300);
+  border-color: var(--secondary-300) !important;
+}
+
+.p-datatable .p-datatable-tbody > tr.p-rowgroup-header {
+  background: var(--secondary-400);
+}
+
+.p-dropdown-panel {
+  background: var(--secondary-300);
 }

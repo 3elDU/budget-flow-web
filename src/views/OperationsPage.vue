@@ -160,6 +160,17 @@ fetchCategories();
 
 const settingsMenu = ref();
 const groupByDates = ref(true);
+
+function getTextColor(hexColor) {
+  const r = parseInt(hexColor.slice(1, 3), 16);
+  const g = parseInt(hexColor.slice(3, 5), 16);
+  const b = parseInt(hexColor.slice(5, 7), 16);
+
+  // Luminance algorithm
+  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+  return brightness > 128 ? 'black' : 'white';
+}
 </script>
 
 <template>
@@ -182,6 +193,7 @@ const groupByDates = ref(true);
         </template>
 
         <Column field="name" header="Name" />
+
         <Column field="description" header="Description">
           <template #body="{ data }">
             <div v-if="data.description" v-tooltip="data.description" class="w-5">
@@ -189,6 +201,7 @@ const groupByDates = ref(true);
             </div>
           </template>
         </Column>
+
         <Column field="categories" header="Categories" style="max-width: 25%">
           <template #body="{ data }">
             <Tag
@@ -197,7 +210,7 @@ const groupByDates = ref(true);
               :value="category.name"
               rounded
               class="m-0.5"
-              :style="`background: ${category.color_hex}`"
+              :style="`background: ${category.color_hex}; color: ${getTextColor(category.color_hex)};`"
             />
           </template>
         </Column>

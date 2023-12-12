@@ -13,11 +13,11 @@ if (!user) {
 }
 
 const links = [
-  { name: 'Dashboard', to: '/dashboard' },
-  { name: 'Analytics', to: '/analytics' },
-  { name: 'Operations', to: '/operations' },
-  { name: 'Categories', to: '/categories' },
-  { name: 'Settings', to: '/profile' },
+  { name: 'Dashboard', to: '/dashboard', icon: 'pi pi-home' },
+  { name: 'Analytics', to: '/analytics', icon: 'pi pi-chart-bar' },
+  { name: 'Operations', to: '/operations', icon: 'pi pi-dollar' },
+  { name: 'Categories', to: '/categories', icon: 'pi pi-tags' },
+  { name: 'Settings', to: '/profile', icon: 'pi pi-cog' },
 ];
 
 const largeScreen = useMediaQuery("(min-width: 1280px)");
@@ -39,28 +39,32 @@ const toggleSidebar = useThrottleFn(() => {
       </div>
     </RouterLink>
 
-    <div class="flex flex-row pl-6 gap-6">
+    <div class="flex flex-row pl-6 gap-4">
       <Button
         v-for="link in links"
         :key="link.name"
         link
+        :icon="link.icon"
+        :label="link.name"
         :class="{
           'bg-primary': router.currentRoute.value.path === link.to,
           'bg-secondary': router.currentRoute.value.path !== link.to,
         }"
-        class="px-4 py-2 rounded-lg text-white font-bold"
+        class="px-4 py-2 rounded-lg text-white font-bold text-sm"
         @click="router.push(link.to)"
-      >
-        {{ link.name }}
-      </Button>
+      />
     </div>
 
-    <div class="ml-auto flex flex-row pr-6 gap-12 items-center">
-      <div class="max-w-[10rem]">
+    <div class="ml-auto flex flex-row pr-6 gap-6 items-center">
+      <div class="max-w-[10rem] truncate text-sm">
         {{ user?.name }}
       </div>
 
-      <Button link class="px-4 py-2 rounded-lg text-white font-bold" @click="userStore.logout">
+      <Button
+        link
+        class="px-4 py-2 rounded-lg text-white font-bold whitespace-nowrap flex-none text-sm"
+        @click="userStore.logout"
+      >
         Log out
       </Button>
     </div>

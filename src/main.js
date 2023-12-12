@@ -28,6 +28,7 @@ import InputNumber from "primevue/inputnumber";
 import Tag from "primevue/tag";
 import ConfirmationModal from "@/components/modals/ConfirmationModal.vue";
 import ProgressSpinner from "primevue/progressspinner";
+import Toolbar from "primevue/toolbar";
 
 const app = createApp(App);
 const pinia = createPinia();
@@ -52,6 +53,7 @@ app.component('InputSwitch', InputSwitch);
 app.component('MultiSelect', MultiSelect);
 app.component('Tag', Tag);
 app.component('ProgressSpinner', ProgressSpinner);
+app.component('Toolbar', Toolbar);
 
 app
   .use(pinia)

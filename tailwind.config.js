@@ -11,7 +11,7 @@ export default {
         primarybg: "var(--primarybg)",
         secondaryfg: "var(--secondaryfg)",
         primary: "var(--primary-color)",
-        secondary: "var(--secondary-color)",
+        secondary: "var(--secondary-500)",
         accent: "var(--accent)",
         success: "var(--success)",
         error: "var(--error)",

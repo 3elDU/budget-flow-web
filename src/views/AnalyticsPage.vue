@@ -119,33 +119,35 @@ const chartData = computed(() => {
 
 <template>
   <div class="p-4 flex flex-col gap-6">
-    <div class="flex flex-col sm:flex-row flex-wrap gap-4">
-      <div class="flex gap-4">
-        <div class="w-full sm:w-fit">
-          <label class="text-sm mr-2" for="startDate">Start date</label>
+    <Toolbar>
+      <template #center>
+        <div class="flex flex-col sm:flex-row flex-wrap gap-4">
+          <div class="w-full sm:w-fit">
+            <label class="text-sm mr-2" for="startDate">Start date</label>
 
-          <Calendar id="startDate" v-model="startTime" @update:model-value="refreshData()" />
+            <Calendar id="startDate" v-model="startTime" @update:model-value="refreshData()" />
+          </div>
+
+          <div class="w-full sm:w-fit">
+            <label class="text-sm mr-2" for="endDate">End date</label>
+
+            <Calendar id="endDate" v-model="endTime" @update:model-value="refreshData()" />
+          </div>
+
+          <div>
+            <label class="text-sm mr-2" for="period">Period</label>
+            <Dropdown
+              id="period"
+              v-model="period"
+              :options="periods"
+              option-label="label"
+              option-value="value"
+              @change="refreshData()"
+            />
+          </div>
         </div>
-
-        <div class="w-full sm:w-fit">
-          <label class="text-sm mr-2" for="endDate">End date</label>
-
-          <Calendar id="endDate" v-model="endTime" @update:model-value="refreshData()" />
-        </div>
-      </div>
-
-      <div>
-        <label class="text-sm mr-2" for="period">Period</label>
-        <Dropdown
-          id="period"
-          v-model="period"
-          :options="periods"
-          option-label="label"
-          option-value="value"
-          @change="refreshData()"
-        />
-      </div>
-    </div>
+      </template>
+    </Toolbar>
 
     <div v-if="isError">
       <p class="text-xl font-bold">
