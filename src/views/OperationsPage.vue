@@ -2,9 +2,10 @@
 import { ref } from 'vue';
 import api from '@/plugins/api.js';
 import { useToast } from 'primevue/usetoast';
+import { formatMoney } from '../plugins/helpers.js';
 import Paginator from 'primevue/paginator';
-import CreateEditOperation from "@/components/modals/CreateEditOperation.vue";
-import {formatMoney} from "../plugins/helpers.js";
+import CreateEditOperation from '@/components/modals/CreateEditOperation.vue';
+import FiltersPanel from '@/components/FiltersPanel.vue';
 
 const toast = useToast();
 
@@ -12,6 +13,7 @@ const isLoading = ref(false);
 const operations = ref([]);
 const meta = ref({});
 const perPage = ref(10);
+const filters = ref([]);
 
 async function fetchOperations() {
   isLoading.value = true;
@@ -20,6 +22,7 @@ async function fetchOperations() {
     params: {
       page: meta.value.current_page ?? 1,
       per_page: perPage.value,
+      filters: filters.value,
     },
   });
 
@@ -49,8 +52,6 @@ function changePage({ page }) {
     fetchOperations();
   }
 }
-
-const filterTypes = ['=', '!=', '>', '<', '>=', '<=', 'like', 'not like'];
 
 const isVisibleOperationModal = ref(false);
 const operation = ref(null);
@@ -123,6 +124,24 @@ function getCurrency(item) {
 
   return budget?.currency_iso ?? 'USD';
 }
+
+const categories = ref([]);
+
+async function fetchCategories() {
+  isLoading.value = true;
+
+  const response = await api.get('categories');
+
+  if (response.status === 200) {
+    categories.value = response.data;
+  } else {
+    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load categories', life: 3000 });
+  }
+
+  isLoading.value = false;
+}
+
+fetchCategories();
 </script>
 
 <template>
@@ -193,48 +212,17 @@ function getCurrency(item) {
       </Paginator>
     </div>
 
-    <Panel header="Filters">
-      <div class="flex flex-col gap-4 w-64">
-        <div>
-          <label for="filterName">Name</label>
-          <InputText id="filterName" class="w-full" />
-        </div>
-
-        <div>
-          <label for="filterDescription">Description</label>
-          <InputText id="filterDescription" class="w-full" />
-        </div>
-
-        <div>
-          <label for="filterCategories">Category</label>
-          <MultiSelect id="filterCategories" class="w-full" />
-        </div>
-
-        <div>
-          <label for="filterDate">Date</label>
-          <div class="flex gap-2">
-            <Dropdown :options="filterTypes" />
-            <Calendar id="filterDate" />
-          </div>
-        </div>
-
-        <div>
-          <label for="filterAmount">Amount</label>
-          <div class="flex gap-2">
-            <Dropdown :options="filterTypes" />
-            <InputNumber id="filterAmount" :max-fraction-digits="2" locale="en-US" inputStyle="width: 1%" />
-          </div>
-        </div>
-
-        <Button label="Apply" severity="primary" />
-        <Button label="Reset" severity="secondary" />
-      </div>
-    </Panel>
+    <FiltersPanel
+      v-model="filters"
+      @apply-filters="fetchOperations"
+      :categories="categories"
+    />
 
     <CreateEditOperation
       v-model:is-visible="isVisibleOperationModal"
       v-model:operation="operation"
       @refresh="fetchOperations"
+      :categories="categories"
     />
 
     <ModalsConfirmationModal ref="modal" />

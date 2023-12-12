@@ -17,6 +17,10 @@ const props = defineProps({
     type: Object,
     required: false,
   },
+  categories: {
+    type: Array,
+    required: true,
+  },
   isVisible: {
     type: Boolean,
     required: true,
@@ -41,24 +45,6 @@ async function fetchBudgets() {
 }
 
 fetchBudgets();
-
-const categories = ref([]);
-
-async function fetchCategories() {
-  isLoading.value = true;
-
-  const response = await api.get('categories');
-
-  if (response.status === 200) {
-    categories.value = response.data;
-  } else {
-    toast.add({ severity: 'error', summary: 'Error', detail: 'Failed to load categories', life: 3000 });
-  }
-
-  isLoading.value = false;
-}
-
-fetchCategories();
 
 function close() {
   emits('update:isVisible', false);
