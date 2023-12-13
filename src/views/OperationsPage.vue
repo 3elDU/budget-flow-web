@@ -258,6 +258,7 @@ function getTextColor(hexColor) {
         :current-page="meta.current_page"
         :rows-per-page-options="[10, 20, 30]"
         @page="changePage"
+        @update:rows="fetchOperations"
       >
         <template #start>
           <Button class="px-0 w-[50px] flex justify-center" @click="isVisibleOperationModal = true">
