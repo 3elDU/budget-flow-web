@@ -1,5 +1,5 @@
 <script setup>
-import {ref, computed} from 'vue';
+import {ref, computed, watch} from 'vue';
 import api from '@/plugins/api.js';
 import {useToast} from 'primevue/usetoast';
 import {formatDate, formatMoney, parseDate} from '../plugins/helpers.js';
@@ -53,6 +53,12 @@ async function fetchOperations() {
 }
 
 fetchOperations();
+
+watch(perPage, () => {
+  meta.value.current_page = 1;
+
+  fetchOperations();
+});
 
 function changePage({ page }) {
   const newPage = page + 1;
@@ -258,7 +264,6 @@ function getTextColor(hexColor) {
         :current-page="meta.current_page"
         :rows-per-page-options="[10, 20, 30]"
         @page="changePage"
-        @update:rows="fetchOperations"
       >
         <template #start>
           <Button class="px-0 w-[50px] flex justify-center" @click="isVisibleOperationModal = true">
